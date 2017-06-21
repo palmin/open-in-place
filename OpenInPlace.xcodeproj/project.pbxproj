@@ -103,7 +103,7 @@
 						CreatedOnToolsVersion = 9.0;
 						SystemCapabilities = {
 							com.apple.iCloud = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -280,6 +280,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
@@ -295,6 +296,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
