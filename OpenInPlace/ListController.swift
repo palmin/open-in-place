@@ -7,12 +7,12 @@
 //
 
 import UIKit
+import MobileCoreServices
 
-class MasterViewController: UITableViewController {
+class ListController: UITableViewController, UIDocumentPickerDelegate {
 
-    var detailViewController: DetailViewController? = nil
+    var detailViewController: EditController? = nil
     var objects = [Any]()
-
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,25 +23,21 @@ class MasterViewController: UITableViewController {
         navigationItem.rightBarButtonItem = addButton
         if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? EditController
         }
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
-        super.viewWillAppear(animated)
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+    
     @objc
     func insertNewObject(_ sender: Any) {
-        objects.insert(NSDate(), at: 0)
-        let indexPath = IndexPath(row: 0, section: 0)
-        tableView.insertRows(at: [indexPath], with: .automatic)
+        
+        let types = [kUTTypeText as String, kUTTypeDirectory as String]
+        let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
+                
+        if #available(iOS 11.0, *) {
+            picker.allowsMultipleSelection = true
+        }
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
     }
 
     // MARK: - Segues
@@ -50,7 +46,7 @@ class MasterViewController: UITableViewController {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let object = objects[indexPath.row] as! NSDate
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                let controller = (segue.destination as! UINavigationController).topViewController as! EditController
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
@@ -89,7 +85,19 @@ class MasterViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
     }
-
-
+    
+    //MARK: UIDocumentPickerDelegate
+    
+    
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        
+    }
+    
+    // this is called on iOS versions before 11 and we just pass URL along in array
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
+        documentPicker(controller, didPickDocumentsAt: [url])
+    }
+    
+    //MARK: -
 }
 
