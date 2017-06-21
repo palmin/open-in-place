@@ -22,9 +22,18 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
         
         restoreUrlBookmarks()
         
-        // Do any additional setup after loading the view, typically from a nib.
-        navigationItem.leftBarButtonItem = editButtonItem
-
+        // we only have edit button for root list, as we want to be able to go back
+        let isRoot = baseURL == nil
+        if(isRoot) {
+            navigationItem.leftBarButtonItem = editButtonItem
+        } else {
+            // read contents of directory
+            baseURL!.startAccessingSecurityScopedResource()
+            self.navigationItem.title = baseURL!.lastPathComponent
+            
+            baseURL!.stopAccessingSecurityScopedResource()
+        }
+        
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
         navigationItem.rightBarButtonItem = addButton
         if let split = splitViewController {
@@ -79,10 +88,37 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+            
             urls.remove(at: indexPath.row)
+            saveUrlBookmarks()
+            
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let url = urls[indexPath.row]
+        if(url.startAccessingSecurityScopedResource()) {
+            
+            let keys = Set<URLResourceKey>([URLResourceKey.isDirectoryKey])
+            let value = try? url.resourceValues(forKeys: keys)
+            switch value?.isDirectory {
+                
+            case .some(true):
+                // directories are opened as a list
+                let sublist = ListController(style: .plain)
+                sublist.baseURL = url
+                self.navigationController?.pushViewController(sublist, animated: true)
+                
+            default:
+                // other files are opened with text editor
+                let cell = tableView.cellForRow(at: indexPath)
+                self.performSegue(withIdentifier: "showDetail", sender: cell)
+            }
+            
+            url.stopAccessingSecurityScopedResource()
         }
     }
     
@@ -120,9 +156,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
     }
     
     func restoreUrlBookmarks() {
-        guard baseURL == nil else {
-            return
-        }
+        guard baseURL == nil else { return }
         
         var newUrls = [URL]()
         
