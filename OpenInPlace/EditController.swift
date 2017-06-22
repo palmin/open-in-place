@@ -10,9 +10,8 @@ import UIKit
 
 class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     
-    private var securityScoped = false
-    
     @IBOutlet var textView: UITextView!
+    
     private func loadContent() {
         // do not load unless we have both url and view loaded
         guard isViewLoaded else { return }
@@ -27,12 +26,13 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         let coordinator = NSFileCoordinator(filePresenter: self)
         url!.coordinatedRead(coordinator, callback: { (text, error) in
             
-            if(error != nil) {
-                self.showError(error!)
-            } else {
-                self.textView.text = text
+            DispatchQueue.main.async {
+                if(error != nil) {
+                    self.showError(error!)
+                } else {
+                    self.textView.text = text
+                }
             }
-            
         })
     }
     
@@ -63,6 +63,12 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadContent()
+        
+        let notifications = NotificationCenter.default
+        notifications.addObserver(self, selector: #selector(appMovedToBackground),
+                                  name: Notification.Name.UIApplicationWillResignActive, object: nil)
+        notifications.addObserver(self, selector: #selector(appMovedToForeground),
+                                  name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -79,7 +85,10 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         // Dispose of any resources that can be recreated.
     }
     
+    private var securityScoped = false
     private var _url: URL?
+    private var isFilePresenting = false
+    
     public var url: URL? {
         set {
             if(_url != nil) {
@@ -87,7 +96,10 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                     _url!.stopAccessingSecurityScopedResource()
                     securityScoped = false
                 }
-                NSFileCoordinator.removeFilePresenter(self)
+                if(isFilePresenting) {
+                    NSFileCoordinator.removeFilePresenter(self)
+                    isFilePresenting = false
+                }
             }
             
             _url = newValue
@@ -95,6 +107,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             if(_url != nil) {
                 securityScoped = _url!.startAccessingSecurityScopedResource()
                 NSFileCoordinator.addFilePresenter(self)
+                isFilePresenting = true
             }
             loadContent()
         }
@@ -144,6 +157,27 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     func accommodatePresentedItemDeletion(completionHandler: @escaping (Error?) -> Void) {
         url = nil
         completionHandler(nil)
+    }
+    
+    @objc func appMovedToBackground() {
+        // it can lead to deadlocks to present files in the background and we back off
+        if(isFilePresenting) {
+            NSFileCoordinator.removeFilePresenter(self)
+            isFilePresenting = false
+        }
+        
+        // write if anything is pending
+        writeContentShowingError()
+    }
+    
+    @objc func appMovedToForeground() {
+        // we are back after being in the background and listen again and refresh from file
+        if(!isFilePresenting && url != nil) {
+            NSFileCoordinator.addFilePresenter(self)
+            isFilePresenting = true
+        }
+        
+        loadContent()
     }
     
     //MARK: - UITextViewDelegate

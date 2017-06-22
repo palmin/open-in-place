@@ -19,6 +19,8 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     var urls = [URL]()
     
     private func reloadContent() {
+        guard baseURL != nil else { return }
+        
         do {
             urls = try FileManager.default.contentsOfDirectory(at: baseURL!, includingPropertiesForKeys: nil, options: [])
             tableView.reloadData()
@@ -30,6 +32,12 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let notifications = NotificationCenter.default
+        notifications.addObserver(self, selector: #selector(appMovedToBackground),
+                                  name: Notification.Name.UIApplicationWillResignActive, object: nil)
+        notifications.addObserver(self, selector: #selector(appMovedToForeground),
+                                  name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
         
         restoreUrlBookmarks()
         
@@ -59,10 +67,16 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         // make sure we only remove file presenter and stop security scope once
         // and only when list is being removed fully from view hierarchy
-        if baseURL != nil && self.isMovingFromParentViewController {
-            NSFileCoordinator.removeFilePresenter(self)
-            baseURL!.stopAccessingSecurityScopedResource()
-            baseURL = nil
+        if self.isMovingFromParentViewController {
+            if(isFilePresenting) {
+                NSFileCoordinator.removeFilePresenter(self)
+                isFilePresenting = false
+            }
+            
+            if baseURL != nil {
+                baseURL!.stopAccessingSecurityScopedResource()
+                baseURL = nil
+            }
         }
     }
     
@@ -241,7 +255,27 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     func presentedSubitemDidAppear(at url: URL) {
         reloadContent()
     }
+    
+    private var isFilePresenting = false
+    
+    @objc func appMovedToBackground() {
+        // it can lead to deadlocks to present files in the background and we back off
+        if(isFilePresenting) {
+            NSFileCoordinator.removeFilePresenter(self)
+            isFilePresenting = false
+        }
+    }
+    
+    @objc func appMovedToForeground() {
+        // we are back after being in the background and listen again and refresh from file
+        if(!isFilePresenting && baseURL != nil) {
+            NSFileCoordinator.addFilePresenter(self)
+            isFilePresenting = true
+        }
         
+        reloadContent()
+    }
+    
     //MARK: -
 }
 
