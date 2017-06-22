@@ -129,6 +129,16 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
+            if(baseURL != nil) {
+                
+                let url = urls[indexPath.row]
+                let coordinator = NSFileCoordinator(filePresenter: self)
+                
+                url.coordinatedDelete(coordinator, callback: { error in
+                    if error != nil { showError(error!) }
+                })
+            }
+            
             urls.remove(at: indexPath.row)
             saveUrlBookmarks()
             
@@ -144,9 +154,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     
     // to be able to save and restore security scoped URL's these must be stored as bookmarks
     func saveUrlBookmarks() {
-        guard baseURL == nil else {
-            return
-        }
+        guard baseURL == nil else { return }
         
         var bookmarks = [Data]()
         
@@ -255,6 +263,24 @@ extension URL {
             default:
                 return false
         }
+    }
+    
+    public func coordinatedDelete(_ coordinator : NSFileCoordinator, callback: ((Error?) -> ())) {
+        let error: NSErrorPointer = nil
+        coordinator.coordinate(writingItemAt: self,
+                               options: NSFileCoordinator.WritingOptions.forDeleting,
+                               error: error, byAccessor: { url in
+                                do {
+                                    try FileManager.default.removeItem(at: url)
+                                    callback(nil)
+                                    
+                                } catch {
+                                    callback(error)
+                                }
+        })
+        
+        // only do callback if there is error, as it will be made during coordination
+        if error != nil { callback(error!.pointee! as NSError) }
     }
 }
 
