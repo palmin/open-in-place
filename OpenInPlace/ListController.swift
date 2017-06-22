@@ -195,7 +195,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             else { continue }
             
             do {
-                let bookmark = try url.bookmarkData(options: [.suitableForBookmarkFile],
+                let bookmark = try url.bookmarkData(options: [],
                                                     includingResourceValuesForKeys: nil,
                                                     relativeTo: nil)
                 bookmarks.append(bookmark)
