@@ -9,14 +9,37 @@
 import UIKit
 import MobileCoreServices
 
-class ListController: UITableViewController, UIDocumentPickerDelegate {
+class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePresenter {
+    
     var detailViewController: EditController? = nil
     
-    // security scoped URL's are shown when nil, otherwise the contents of directory
     public var baseURL: URL? = nil
     
+    // security scoped URL's are shown when baseURL is nil, otherwise the contents of directory
     var urls = [URL]()
-
+    
+    private func reloadContent() {
+        if(baseURL?.startAccessingSecurityScopedResource() ?? false) {
+            
+            do {
+                urls = try FileManager.default.contentsOfDirectory(at: baseURL!, includingPropertiesForKeys: nil, options: [])
+                tableView.reloadData()
+                
+            } catch {
+                showError(error)
+            }
+            
+            baseURL!.stopAccessingSecurityScopedResource()
+        }
+    }
+    
+    func showError(_ error : Error) {
+        let alert = UIAlertController.init(title: "Error",
+                                           message: error.localizedDescription,
+                                           preferredStyle: .alert)
+        present(alert, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,10 +51,14 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
             navigationItem.leftBarButtonItem = editButtonItem
         } else {
             // read contents of directory
-            baseURL!.startAccessingSecurityScopedResource()
-            self.navigationItem.title = baseURL!.lastPathComponent
-            
-            baseURL!.stopAccessingSecurityScopedResource()
+            if(baseURL!.startAccessingSecurityScopedResource()) {
+                self.navigationItem.title = baseURL!.lastPathComponent
+                baseURL!.stopAccessingSecurityScopedResource()
+                
+                reloadContent()
+                
+                NSFileCoordinator.addFilePresenter(self)
+            }
         }
         
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
@@ -39,6 +66,16 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? EditController
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if(baseURL != nil) {
+            // make sure we only remove file presenter once
+            NSFileCoordinator.removeFilePresenter(self)
+            baseURL = nil
         }
     }
     
@@ -75,6 +112,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
         let url = urls[indexPath.row]
         if(url.startAccessingSecurityScopedResource()) {
             cell.textLabel!.text = url.lastPathComponent
+            cell.accessoryType = url.isDirectory ? .disclosureIndicator : .none
             url.stopAccessingSecurityScopedResource()
         }
         
@@ -102,20 +140,19 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
         let url = urls[indexPath.row]
         if(url.startAccessingSecurityScopedResource()) {
             
-            let keys = Set<URLResourceKey>([URLResourceKey.isDirectoryKey])
-            let value = try? url.resourceValues(forKeys: keys)
-            switch value?.isDirectory {
+            if(url.isDirectory) {
                 
-            case .some(true):
                 // directories are opened as a list
+                read_from_storyboard();
                 let sublist = ListController(style: .plain)
                 sublist.baseURL = url
                 self.navigationController?.pushViewController(sublist, animated: true)
+            } else {
                 
-            default:
                 // other files are opened with text editor
                 let cell = tableView.cellForRow(at: indexPath)
                 self.performSegue(withIdentifier: "showDetail", sender: cell)
+                
             }
             
             url.stopAccessingSecurityScopedResource()
@@ -206,6 +243,39 @@ class ListController: UITableViewController, UIDocumentPickerDelegate {
         documentPicker(controller, didPickDocumentsAt: [url])
     }
     
+    //MARK: - NSFilePresenter
+    var presentedItemURL: URL? {
+        return baseURL
+    }
+    
+    private var presenterQueue : OperationQueue?
+    var presentedItemOperationQueue: OperationQueue {
+        if(presenterQueue == nil) {
+            presenterQueue = OperationQueue()
+        }
+        return presenterQueue!
+    }
+    
+    func presentedItemDidChange() {
+        reloadContent()
+    }
+    
     //MARK: -
+}
+
+extension URL {
+    
+    // shorthand to check if URL is directory
+    public var isDirectory: Bool {
+        let keys = Set<URLResourceKey>([URLResourceKey.isDirectoryKey])
+        let value = try? self.resourceValues(forKeys: keys)
+        switch value?.isDirectory {
+            case .some(true):
+                return true
+            
+            default:
+                return false
+        }
+    }
 }
 
