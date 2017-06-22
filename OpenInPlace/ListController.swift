@@ -4,7 +4,8 @@
 //
 //  This view controller shows how to
 //   1) open files and directories from iCloud Drive and other document providers as security scoped URLs:
-//    pickURLs() and the UIDocumentPickerDelegate delegate methods
+//    pickURLs() and the UIDocumentPickerDelegate delegate methods and notice the line commented out 
+//    in pickURLs() that you probably want when compiling with iOS 11 SDK.
 //
 //   2) persist security scoped URLs:
 //     saveUrlBookmarks() and restoreUrlBookmarks() converts arrays of security scoped URL objects into
@@ -238,7 +239,10 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
         
         if #available(iOS 11.0, *) {
-            picker.allowsMultipleSelection = true
+            // Enable this when compiling with iOS 11 SDK as it allows selecting multiple files
+            // and selecting directories.
+            //
+            // picker.allowsMultipleSelection = true
         }
         picker.delegate = self
         present(picker, animated: true, completion: nil)
