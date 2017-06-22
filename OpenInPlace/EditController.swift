@@ -1,6 +1,19 @@
 //
-//  DetailViewController.swift
+//  EditController.swift
 //  OpenInPlace
+//
+//  This view controller shows how to
+//   1) read contents in coordinated manner from a remote file from iCloud Drive or another document providers:
+//    loadContent()
+//
+//   2) write back content in coordinated manner:
+//     writeContentIfNeeded() and writeContentShowingError()
+//
+//   3) observe changes and coordinate with other processes accessing file:
+//    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
+//
+//   4) auto-save changes:
+//    textViewDidChange() and appMovedToBackground()
 //
 //  Created by Anders Borum on 21/06/2017.
 //  Copyright © 2017 Applied Phasor. All rights reserved.

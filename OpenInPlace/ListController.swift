@@ -10,13 +10,13 @@
 //     saveUrlBookmarks() and restoreUrlBookmarks() converts arrays of security scoped URL objects into
 //     arrays of bookmark Data.
 //
-//   3) list contents of directories accessed through document providers in file coordinated manner
+//   3) list contents of directories accessed through document providers in file coordinated manner:
 //    reloadContent() does this but not for the root list
 //
-//   4) delete files in other document providers with file coordination
+//   4) delete files in other document providers with file coordination:
 //    happens in tableView(tableView,editingStyle, forRowAt) but not for the root list
 //
-//   5) how to watch a directory for changes
+//   5) how to watch a directory for changes:
 //    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
 //
 //  Created by Anders Borum on 21/06/2017.
