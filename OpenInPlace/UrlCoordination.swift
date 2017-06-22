@@ -46,6 +46,24 @@ extension URL {
         if error != nil { callback(nil, error!.pointee! as NSError) }
     }
     
+    public func coordinatedWrite(_ text : String, _ coordinator : NSFileCoordinator,
+                                callback: ((Error?) -> ())) {
+        let error: NSErrorPointer = nil
+        coordinator.coordinate(writingItemAt: self, options: [],
+                               error: error, byAccessor: { url in
+                                do {
+                                    try text.write(to: url, atomically: false, encoding: .utf8)
+                                    callback(nil)
+                                    
+                                } catch {
+                                    callback(error)
+                                }
+        })
+        
+        // only do callback if there is error, as it will be made during coordination
+        if error != nil { callback(error!.pointee! as NSError) }
+    }
+    
     // shorthand to check if URL is directory
     public var isDirectory: Bool {
         let keys = Set<URLResourceKey>([URLResourceKey.isDirectoryKey])

@@ -15,9 +15,14 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     @IBOutlet var textView: UITextView!
     private func loadContent() {
         // do not load unless we have both url and view loaded
-        guard isViewLoaded && url != nil else {
+        guard isViewLoaded else { return }
+        guard url != nil else {
+            self.navigationItem.title = "<DELETED>"
+            self.textView.text = ""
             return
         }
+        
+        navigationItem.title = _url?.lastPathComponent
         
         let coordinator = NSFileCoordinator(filePresenter: self)
         url!.coordinatedRead(coordinator, callback: { (text, error) in
@@ -28,6 +33,30 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                 self.textView.text = text
             }
             
+        })
+    }
+    
+    private var unwrittenChanges = false
+    private func writeContentIfNeeded(callback: ((Error?) -> ())) {
+        guard unwrittenChanges else {
+            callback(nil)
+            return
+            
+        }
+        unwrittenChanges = false
+        
+        guard url != nil else { return }
+        let coordinator = NSFileCoordinator(filePresenter: self)
+        url!.coordinatedWrite(textView.text, coordinator, callback: callback)
+    }
+    
+    // calls writeContentIfNeeded(callback:) showing errors
+    @objc private func writeContentShowingError() {
+        
+        writeContentIfNeeded(callback: { error in
+            if(error != nil) {
+                self.showError(error!)
+            }
         })
     }
     
@@ -66,9 +95,8 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             if(_url != nil) {
                 securityScoped = _url!.startAccessingSecurityScopedResource()
                 NSFileCoordinator.addFilePresenter(self)
-                loadContent()
             }
-            navigationItem.title = _url?.lastPathComponent
+            loadContent()
         }
         get {
             return _url
@@ -88,8 +116,44 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         return presenterQueue!
     }
     
+    // file was changed by someone else and we want to reload
     func presentedItemDidChange() {
         loadContent()
+    }
+    
+    // someone wants to read the file and we make sure pending changes are written
+    func relinquishPresentedItem(toReader reader: @escaping ((() -> Void)?) -> Void) {
+        writeContentIfNeeded(callback: { error in
+            reader(nil)
+        })
+    }
+    
+    // someone wants to write the file and we make sure pending changes are written
+    func relinquishPresentedItem(toWriter writer: @escaping ((() -> Void)?) -> Void) {
+        writeContentIfNeeded(callback: { error in
+            writer(nil)
+        })
+    }
+    
+    // file is being renamed by someone else and we keep work in new file location
+    func presentedItemDidMove(to newURL: URL) {
+        url = newURL
+    }
+    
+    // file is being deleted and we stop tracking it
+    func accommodatePresentedItemDeletion(completionHandler: @escaping (Error?) -> Void) {
+        url = nil
+        completionHandler(nil)
+    }
+    
+    //MARK: - UITextViewDelegate
+    
+    func textViewDidChange(_ textView: UITextView) {
+        // we want to write changes, but not after every keystroke and wait for a
+        // whole second without changes
+        unwrittenChanges = true
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(writeContentShowingError), object: nil)
+        perform(#selector(writeContentShowingError), with: nil, afterDelay: 1.0)
     }
     
     //MARK: -
