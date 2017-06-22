@@ -19,17 +19,12 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     var urls = [URL]()
     
     private func reloadContent() {
-        if(baseURL?.startAccessingSecurityScopedResource() ?? false) {
-            
-            do {
-                urls = try FileManager.default.contentsOfDirectory(at: baseURL!, includingPropertiesForKeys: nil, options: [])
-                tableView.reloadData()
+        do {
+            urls = try FileManager.default.contentsOfDirectory(at: baseURL!, includingPropertiesForKeys: nil, options: [])
+            tableView.reloadData()
                 
-            } catch {
-                showError(error)
-            }
-            
-            baseURL!.stopAccessingSecurityScopedResource()
+        } catch {
+            showError(error)
         }
     }
     
@@ -51,14 +46,11 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             navigationItem.leftBarButtonItem = editButtonItem
         } else {
             // read contents of directory
-            if(baseURL!.startAccessingSecurityScopedResource()) {
-                self.navigationItem.title = baseURL!.lastPathComponent
-                baseURL!.stopAccessingSecurityScopedResource()
-                
-                reloadContent()
-                
-                NSFileCoordinator.addFilePresenter(self)
-            }
+            let _ = baseURL!.startAccessingSecurityScopedResource()
+            self.navigationItem.title = baseURL?.lastPathComponent
+            
+            reloadContent()
+            NSFileCoordinator.addFilePresenter(self)
         }
         
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
@@ -72,9 +64,11 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        if(baseURL != nil) {
-            // make sure we only remove file presenter once
+        // make sure we only remove file presenter and stop security scope once
+        // and only when list is being removed fully from view hierarchy
+        if baseURL != nil && self.isMovingFromParentViewController {
             NSFileCoordinator.removeFilePresenter(self)
+            baseURL!.stopAccessingSecurityScopedResource()
             baseURL = nil
         }
     }
@@ -82,10 +76,17 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     // MARK: - Segues
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
+        if segue.identifier == "subdir" {
+            if let indexPath = tableView.indexPathForSelectedRow {
+                
+                let controller = segue.destination as! ListController
+                controller.baseURL = urls[indexPath.row]
+            }
+        }
+        
+        if segue.identifier == "edit" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let url = urls[indexPath.row]
-                
                 
                 
                 //let controller = (segue.destination as! UINavigationController).topViewController as! EditController
@@ -107,14 +108,15 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-
+        
         let url = urls[indexPath.row]
-        if(url.startAccessingSecurityScopedResource()) {
-            cell.textLabel!.text = url.lastPathComponent
-            cell.accessoryType = url.isDirectory ? .disclosureIndicator : .none
-            url.stopAccessingSecurityScopedResource()
-        }
+        let securityScoped = url.startAccessingSecurityScopedResource()
+        
+        let identifier = url.isDirectory ? "dir" : "file"
+        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+        cell.textLabel!.text = url.lastPathComponent
+        
+        if securityScoped { url.stopAccessingSecurityScopedResource() }
         
         return cell
     }
@@ -133,29 +135,6 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let url = urls[indexPath.row]
-        if(url.startAccessingSecurityScopedResource()) {
-            
-            if(url.isDirectory) {
-                
-                // directories are opened as a list
-                read_from_storyboard();
-                let sublist = ListController(style: .plain)
-                sublist.baseURL = url
-                self.navigationController?.pushViewController(sublist, animated: true)
-            } else {
-                
-                // other files are opened with text editor
-                let cell = tableView.cellForRow(at: indexPath)
-                self.performSegue(withIdentifier: "showDetail", sender: cell)
-                
-            }
-            
-            url.stopAccessingSecurityScopedResource()
         }
     }
     
