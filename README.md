@@ -1,6 +1,6 @@
 # Open in Place
 
-Minimal example app that illustrates how to get open-in-place to work well with iOS document pickers.
+Minimal example app that illustrates how to get open-in-place to work well with iOS document providers.
 
 It shows how to:
 - invoke the document picker in open mode for files and directories
