@@ -69,6 +69,10 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         let isRoot = baseURL == nil
         if(isRoot) {
             navigationItem.leftBarButtonItem = editButtonItem
+            
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
+            navigationItem.rightBarButtonItem = addButton
+            
         } else {
             // read contents of directory
             let _ = baseURL!.startAccessingSecurityScopedResource()
@@ -78,8 +82,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             NSFileCoordinator.addFilePresenter(self)
         }
         
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
-        navigationItem.rightBarButtonItem = addButton
+        
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? EditController
@@ -242,7 +245,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             // Enable this when compiling with iOS 11 SDK as it allows selecting multiple files
             // and selecting directories.
             //
-            // picker.allowsMultipleSelection = true
+            //picker.allowsMultipleSelection = true
         }
         picker.delegate = self
         present(picker, animated: true, completion: nil)
