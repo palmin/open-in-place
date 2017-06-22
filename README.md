@@ -5,8 +5,8 @@ Minimal example app that illustrates how to get open-in-place to work well with 
 It shows how to:
 - invoke the document picker in open mode for files and directories
 - use and persist the security scoped URLs the document picker gives you
-- how to work with a directory in a coordinated manner to stay in sync
-- how to edit a text file in a coordinated manner such that your changes are written safely and such that outside changes appear in the editor automatically.
+- work with a directory in a coordinated manner to stay in sync
+- edit a text file in a coordinated manner such that your changes are written safely and such that outside changes appear in the editor automatically.
 
 Using the document picker to open directories will probably only work for a few document providers that happen 
 to be Git clients. 
