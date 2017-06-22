@@ -2,6 +2,9 @@
 //  UrlCoordination.swift
 //  OpenInPlace
 //
+//  These helper methods do file coordinated operations on URL objects.
+//  The callbacks are not guaranteed to happen on any particular thread.
+//
 //  Created by Anders Borum on 22/06/2017.
 //  Copyright © 2017 Applied Phasor. All rights reserved.
 //
@@ -26,6 +29,26 @@ extension URL {
         
         // only do callback if there is error, as it will be made during coordination
         if error != nil { callback(error!.pointee! as NSError) }
+    }
+    
+    public func coordinatedList(_ coordinator : NSFileCoordinator,
+                                callback: (([URL]?, Error?) -> ())) {
+        let error: NSErrorPointer = nil
+        coordinator.coordinate(readingItemAt: self, options: [],
+                               error: error, byAccessor: { url in
+                                do {
+                                    let urls = try FileManager.default.contentsOfDirectory(at: url,
+                                                                                           includingPropertiesForKeys: nil,
+                                                                                           options: [])
+                                    callback(urls, nil)
+                                    
+                                } catch {
+                                    callback(nil, error)
+                                }
+        })
+        
+        // only do callback if there is error, as it will be made during coordination
+        if error != nil { callback(nil, error!.pointee! as NSError) }
     }
     
     public func coordinatedRead(_ coordinator : NSFileCoordinator,

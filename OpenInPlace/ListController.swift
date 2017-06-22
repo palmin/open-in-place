@@ -1,6 +1,23 @@
 //
-//  MasterViewController.swift
+//  ListController.swift
 //  OpenInPlace
+//
+//  This view controller shows how to
+//   1) open files and directories from iCloud Drive and other document providers as security scoped URLs:
+//    pickURLs() and the UIDocumentPickerDelegate delegate methods
+//
+//   2) persist security scoped URLs:
+//     saveUrlBookmarks() and restoreUrlBookmarks() converts arrays of security scoped URL objects into
+//     arrays of bookmark Data.
+//
+//   3) list contents of directories accessed through document providers in file coordinated manner
+//    reloadContent() does this but not for the root list
+//
+//   4) delete files in other document providers with file coordination
+//    happens in tableView(tableView,editingStyle, forRowAt) but not for the root list
+//
+//   5) how to watch a directory for changes
+//    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
 //
 //  Created by Anders Borum on 21/06/2017.
 //  Copyright © 2017 Applied Phasor. All rights reserved.
@@ -21,13 +38,19 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     private func reloadContent() {
         guard baseURL != nil else { return }
         
-        do {
-            urls = try FileManager.default.contentsOfDirectory(at: baseURL!, includingPropertiesForKeys: nil, options: [])
-            tableView.reloadData()
-                
-        } catch {
-            showError(error)
-        }
+        let coordinator = NSFileCoordinator(filePresenter: self)
+        baseURL!.coordinatedList(coordinator, callback: { (newUrls, error) in
+            
+            DispatchQueue.main.async {
+                if(error != nil) {
+                    self.showError(error!)
+                }
+                if(newUrls != nil) {
+                    self.urls = newUrls!
+                    self.tableView.reloadData()
+                }
+            }
+        })
     }
         
     override func viewDidLoad() {
