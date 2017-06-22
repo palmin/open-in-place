@@ -69,7 +69,9 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         
         writeContentIfNeeded(callback: { error in
             if(error != nil) {
-                self.showError(error!)
+                DispatchQueue.main.async {
+                    self.showError(error!)
+                }
             }
         })
     }
