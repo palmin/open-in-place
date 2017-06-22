@@ -238,6 +238,10 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         reloadContent()
     }
     
+    func presentedSubitemDidAppear(at url: URL) {
+        reloadContent()
+    }
+    
     //MARK: -
 }
 
