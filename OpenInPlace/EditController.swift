@@ -59,7 +59,11 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         }
         unwrittenChanges = false
         
-        guard url != nil else { return }
+        guard url != nil else {
+            callback(nil)
+            return
+        }
+        
         let coordinator = NSFileCoordinator(filePresenter: self)
         url!.coordinatedWrite(textView.text, coordinator, callback: callback)
     }
