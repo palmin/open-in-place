@@ -237,7 +237,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         }
         urls = newUrls
         
-        // stale bookmarks need to be recreated and we just recreate all of them and
+        // stale bookmarks need to be recreated and we just recreate all of them where
         // a proper application would want to be smarter about this
         if anyStale {
             saveUrlBookmarks()
