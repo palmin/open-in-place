@@ -27,14 +27,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             showError(error)
         }
     }
-    
-    func showError(_ error : Error) {
-        let alert = UIAlertController.init(title: "Error",
-                                           message: error.localizedDescription,
-                                           preferredStyle: .alert)
-        present(alert, animated: true, completion: nil)
-    }
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -86,13 +79,11 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         if segue.identifier == "edit" {
             if let indexPath = tableView.indexPathForSelectedRow {
-                let url = urls[indexPath.row]
                 
-                
-                //let controller = (segue.destination as! UINavigationController).topViewController as! EditController
-                //controller.detailItem = object
-                //controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-                //controller.navigationItem.leftItemsSupplementBackButton = true
+                let controller = segue.destination as! EditController
+                controller.url = urls[indexPath.row]
+                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+                controller.navigationItem.leftItemsSupplementBackButton = true
             }
         }
     }
@@ -250,37 +241,4 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     //MARK: -
 }
 
-extension URL {
-    
-    // shorthand to check if URL is directory
-    public var isDirectory: Bool {
-        let keys = Set<URLResourceKey>([URLResourceKey.isDirectoryKey])
-        let value = try? self.resourceValues(forKeys: keys)
-        switch value?.isDirectory {
-            case .some(true):
-                return true
-            
-            default:
-                return false
-        }
-    }
-    
-    public func coordinatedDelete(_ coordinator : NSFileCoordinator, callback: ((Error?) -> ())) {
-        let error: NSErrorPointer = nil
-        coordinator.coordinate(writingItemAt: self,
-                               options: NSFileCoordinator.WritingOptions.forDeleting,
-                               error: error, byAccessor: { url in
-                                do {
-                                    try FileManager.default.removeItem(at: url)
-                                    callback(nil)
-                                    
-                                } catch {
-                                    callback(error)
-                                }
-        })
-        
-        // only do callback if there is error, as it will be made during coordination
-        if error != nil { callback(error!.pointee! as NSError) }
-    }
-}
 
