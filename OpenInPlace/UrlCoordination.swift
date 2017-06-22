@@ -13,7 +13,9 @@ import Foundation
 
 extension URL {
     
-    public func coordinatedDelete(_ coordinator : NSFileCoordinator, callback: ((Error?) -> ())) {
+    public func coordinatedDelete(_ coordinator : NSFileCoordinator,
+                                  callback: @escaping ((Error?) -> ())) {
+
         let error: NSErrorPointer = nil
         coordinator.coordinate(writingItemAt: self,
                                options: NSFileCoordinator.WritingOptions.forDeleting,
@@ -32,7 +34,8 @@ extension URL {
     }
     
     public func coordinatedList(_ coordinator : NSFileCoordinator,
-                                callback: (([URL]?, Error?) -> ())) {
+                                callback: @escaping (([URL]?, Error?) -> ())) {
+        
         let error: NSErrorPointer = nil
         coordinator.coordinate(readingItemAt: self, options: [],
                                error: error, byAccessor: { url in
@@ -52,7 +55,8 @@ extension URL {
     }
     
     public func coordinatedRead(_ coordinator : NSFileCoordinator,
-                                callback: ((String?, Error?) -> ())) {
+                                callback: @escaping ((String?, Error?) -> ())) {
+        
         let error: NSErrorPointer = nil
         coordinator.coordinate(readingItemAt: self, options: [],
                                error: error, byAccessor: { url in
@@ -70,7 +74,8 @@ extension URL {
     }
     
     public func coordinatedWrite(_ text : String, _ coordinator : NSFileCoordinator,
-                                callback: ((Error?) -> ())) {
+                                callback: @escaping ((Error?) -> ())) {
+        
         let error: NSErrorPointer = nil
         coordinator.coordinate(writingItemAt: self, options: [],
                                error: error, byAccessor: { url in

@@ -50,7 +50,8 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     }
     
     private var unwrittenChanges = false
-    private func writeContentIfNeeded(callback: ((Error?) -> ())) {
+    private func writeContentIfNeeded(callback: @escaping ((Error?) -> ())) {
+
         guard unwrittenChanges else {
             callback(nil)
             return

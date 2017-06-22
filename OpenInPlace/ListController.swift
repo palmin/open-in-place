@@ -163,7 +163,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                 let coordinator = NSFileCoordinator(filePresenter: self)
                 
                 url.coordinatedDelete(coordinator, callback: { error in
-                    if error != nil { showError(error!) }
+                    if error != nil { self.showError(error!) }
                 })
             }
             
