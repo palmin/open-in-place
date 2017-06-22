@@ -215,6 +215,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         guard baseURL == nil else { return }
         
         var newUrls = [URL]()
+        var anyStale = false
         
         let bookmarks = UserDefaults.standard.object(forKey: bookmarksDefaultsKey) as? [Data]
         if(bookmarks != nil) {
@@ -224,16 +225,23 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                     var stale = false
                     let url = try URL(resolvingBookmarkData: bookmark, bookmarkDataIsStale: &stale)
                     if(url != nil) {
+                        anyStale = anyStale || stale
                         newUrls.append(url!)
                     }
                     
                 } catch {
                     print("\(error)")
                 }
-                
             }
+            
         }
         urls = newUrls
+        
+        // stale bookmarks need to be recreated and we just recreate all of them and
+        // a proper application would want to be smarter about this
+        if anyStale {
+            saveUrlBookmarks()
+        }
     }
     
     @objc func pickURLs(_ sender: Any) {
