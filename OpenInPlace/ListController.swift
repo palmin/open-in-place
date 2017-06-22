@@ -230,9 +230,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         // stale bookmarks need to be recreated and we just recreate all of them where
         // a proper application would want to be smarter about this
-        if anyStale {
-            saveUrlBookmarks()
-        }
+        if anyStale { saveUrlBookmarks() }
     }
     
     @objc func pickURLs(_ sender: Any) {
