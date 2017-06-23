@@ -99,11 +99,6 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             url = nil
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     private var securityScoped = false
     private var _url: URL?
