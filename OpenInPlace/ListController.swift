@@ -12,10 +12,11 @@
 //     arrays of bookmark Data.
 //
 //   3) list contents of directories accessed through document providers in file coordinated manner:
-//    reloadContent() does this but not for the root list
+//    reloadContent() does this but not for the root list.
 //
 //   4) delete files in other document providers with file coordination:
-//    happens in tableView(tableView,editingStyle, forRowAt) but not for the root list
+//    happens in tableView(tableView,editingStyle,forRowAt) but not for the root list where a bookmark
+//    is deleted.
 //
 //   5) how to watch a directory for changes:
 //    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
