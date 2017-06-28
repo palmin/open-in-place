@@ -15,6 +15,9 @@
 //   4) auto-save changes:
 //    textViewDidChange() and appMovedToBackground()
 //
+//  If you are using UIDocument you mostly get all this for free.
+//
+//
 //  Created by Anders Borum on 21/06/2017.
 //  Copyright © 2017 Applied Phasor. All rights reserved.
 //
