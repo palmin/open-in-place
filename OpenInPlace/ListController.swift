@@ -237,11 +237,8 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         let types = [kUTTypeText as String, kUTTypeDirectory as String]
         let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
         
-        if #available(iOS 11.0, *) {
-            // Enable this when compiling with iOS 11 SDK as it allows selecting multiple files
-            // and selecting directories.
-            //
-            //picker.allowsMultipleSelection = true
+        if #available(iOS 11.0, *) {            
+            picker.allowsMultipleSelection = true
         }
         picker.delegate = self
         present(picker, animated: true, completion: nil)
