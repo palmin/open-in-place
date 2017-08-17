@@ -187,7 +187,8 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         let identifier = url.isDirectory ? "dir" : "file"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         cell.textLabel!.text = url.lastPathComponent
-        
+        url.stopAccessingSecurityScopedResource()
+
         return cell
     }
 
