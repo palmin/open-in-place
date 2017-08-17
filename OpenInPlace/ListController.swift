@@ -143,10 +143,12 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let url = urls[indexPath.row]
+        let _ = url.startAccessingSecurityScopedResource()
         let identifier = url.isDirectory ? "dir" : "file"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         cell.textLabel!.text = url.lastPathComponent
-        
+        url.stopAccessingSecurityScopedResource()
+
         return cell
     }
 
@@ -186,6 +188,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         var bookmarks = [Data]()
         
         for url in urls {
+            let _ = url.startAccessingSecurityScopedResource()
             do {
                 let bookmark = try url.bookmarkData(options: [],
                                                     includingResourceValuesForKeys: nil,
@@ -195,6 +198,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             } catch {
                 print("\(error)")
             }
+            url.stopAccessingSecurityScopedResource()
         }
         
         // store in user defaults, since this is just a demo
