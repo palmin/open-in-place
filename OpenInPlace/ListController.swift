@@ -243,7 +243,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                 bookmarks.append(bookmark)
                 
             } catch {
-                print("\(error)")
+                self.showError(error, title: "saveUrlBookmarks")
             }
             url.stopAccessingSecurityScopedResource()
         }
@@ -306,7 +306,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: uti,
                                                        completionHandler: { (url, inPlace, error) in
                 guard inPlace else {
-                    NSLog("Unable to load \(url?.lastPathComponent ?? "null") in place.")
+                    NSLog("Unable to load \(url?.absoluteString ?? "null") in place.")
                     return
                 }
                                                         
