@@ -78,13 +78,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             navigationItem.leftBarButtonItem = editButtonItem
             
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
-            
-            if #available(iOS 11.0, *) {
-                let pasteButton = UIBarButtonItem(title: "Paste", style: .plain, target: self, action: #selector(pasteURLs))
-                navigationItem.rightBarButtonItems = [addButton, pasteButton]
-            } else {
-                navigationItem.rightBarButtonItems = [addButton]
-            }
+            navigationItem.rightBarButtonItems = [addButton]
             
         } else {
             // read contents of directory
@@ -293,34 +287,6 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         }
         picker.delegate = self
         present(picker, animated: true, completion: nil)
-    }
-    
-    //MARK: -
-    
-    @available(iOS 11.0, *)
-    @objc func pasteURLs() {
-        for itemProvider in UIPasteboard.general.itemProviders {
-            guard let uti: String = itemProvider.registeredTypeIdentifiers.first as! String? else { continue }
-            guard itemProvider.hasRepresentationConforming(toTypeIdentifier: uti, fileOptions: .openInPlace) else { continue }
-            
-            itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: uti,
-                                                       completionHandler: { (url, inPlace, error) in
-                guard inPlace else {
-                    NSLog("Unable to load \(url?.absoluteString ?? "null") in place.")
-                    return
-                }
-                                                        
-                if url != nil {
-                    self.urls.append(url!)
-                    self.saveUrlBookmarks()
-                }
-
-                DispatchQueue.main.async {
-                    if error != nil { self.showError(error!) }
-                    self.tableView.reloadData()
-                }
-            })
-        }
     }
     
     //MARK: - UIDocumentPickerDelegate
