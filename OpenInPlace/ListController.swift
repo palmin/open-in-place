@@ -289,6 +289,13 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         present(picker, animated: true, completion: nil)
     }
     
+    public func addURL(_ url: URL) {
+        urls.append(url)
+        saveUrlBookmarks()
+        
+        tableView.reloadData()
+    }
+    
     //MARK: - UIDocumentPickerDelegate
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt newUrls: [URL]) {
