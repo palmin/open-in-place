@@ -283,6 +283,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
         
         if #available(iOS 11.0, *) {
+            let _ = picker.view // force loading of view, since allowsMultipleSelection does not stick otherwise
             picker.allowsMultipleSelection = true
         }
         picker.delegate = self
