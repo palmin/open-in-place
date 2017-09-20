@@ -4,21 +4,23 @@
 //
 //  This view controller shows how to
 //   1) open files and directories from iCloud Drive and other document providers as security scoped URLs:
-//    pickURLs() and the UIDocumentPickerDelegate delegate methods and notice the line commented out 
-//    in pickURLs() that you probably want when compiling with iOS 11 SDK.
+//    pickURLs() and the UIDocumentPickerDelegate delegate methods.
 //
-//   2) persist security scoped URLs:
+//   2) drag in-place references to files and directories from other applications as security scoped URLs:
+//      UITableViewDropDelegate methods
+//
+//   3) persist security scoped URLs:
 //     saveUrlBookmarks() and restoreUrlBookmarks() converts arrays of security scoped URL objects into
 //     arrays of bookmark Data.
 //
-//   3) list contents of directories accessed through document providers in file coordinated manner:
+//   4) list contents of directories accessed through document providers in file coordinated manner:
 //    reloadContent() does this but not for the root list.
 //
-//   4) delete files in other document providers with file coordination:
+//   5) delete files in other document providers with file coordination:
 //    happens in tableView(tableView,editingStyle,forRowAt) but not for the root list where a bookmark
 //    is deleted.
 //
-//   5) how to watch a directory for changes:
+//   6) how to watch a directory for changes:
 //    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
 //
 //  Created by Anders Borum on 21/06/2017.
@@ -28,8 +30,7 @@
 import UIKit
 import MobileCoreServices
 
-class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePresenter {
-    
+class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePresenter, UITableViewDropDelegate {
     var detailViewController: EditController? = nil
     
     public var baseURL: URL? = nil
@@ -66,13 +67,18 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         restoreUrlBookmarks()
         
+        if #available(iOS 11.0, *) {
+            // enable items dropped on tableView
+            tableView.dropDelegate = self
+        }
+        
         // we only have edit button for root list, as we want to be able to go back
         let isRoot = baseURL == nil
         if(isRoot) {
             navigationItem.leftBarButtonItem = editButtonItem
             
             let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
-            navigationItem.rightBarButtonItem = addButton
+            navigationItem.rightBarButtonItems = [addButton]
             
         } else {
             // read contents of directory
@@ -127,6 +133,41 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
+        }
+    }
+    
+    // MARK: - UITableViewDropDelegate
+    
+    @available(iOS 11.0, *)
+    func tableView(_ tableView: UITableView, canHandle session: UIDropSession) -> Bool {
+        let canOpenInPlace = baseURL == nil
+        return canOpenInPlace
+    }
+    
+    @available(iOS 11.0, *)
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+        // root list can open in-place and the other lists import copies, but we do not yet support this
+        let canOpenInPlace = baseURL == nil
+        guard canOpenInPlace else { return }
+        
+        for dropItem in coordinator.items {
+            let itemProvider = dropItem.dragItem.itemProvider
+            let uti = itemProvider.registeredTypeIdentifiers.first as! String? ?? "public.data"
+            itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: uti,
+                                                       completionHandler: {(url, inPlace, error) in
+                if error != nil { self.showError(error!) }
+                guard inPlace else { return }
+
+                guard let url = url else { return }
+                                                        
+                // remember this url
+                self.urls.append(url)
+                self.saveUrlBookmarks()
+
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            })
         }
     }
 
@@ -196,7 +237,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                 bookmarks.append(bookmark)
                 
             } catch {
-                print("\(error)")
+                self.showError(error, title: "saveUrlBookmarks")
             }
             url.stopAccessingSecurityScopedResource()
         }
@@ -242,13 +283,17 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
         
         if #available(iOS 11.0, *) {
-            // Enable this when compiling with iOS 11 SDK as it allows selecting multiple files
-            // and selecting directories.
-            //
-            //picker.allowsMultipleSelection = true
+            picker.allowsMultipleSelection = true
         }
         picker.delegate = self
         present(picker, animated: true, completion: nil)
+    }
+    
+    public func addURL(_ url: URL) {
+        urls.append(url)
+        saveUrlBookmarks()
+        
+        tableView.reloadData()
     }
     
     //MARK: - UIDocumentPickerDelegate
