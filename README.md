@@ -1,5 +1,3 @@
-# Open in Place
-
 <p align="center">
 <a href="https://developer.apple.com/swift/"><img src="https://img.shields.io/badge/Swift-3.2-orange.svg?style=flat" alt="Swift"/></a>
 
@@ -7,6 +5,7 @@
 <a href="http://twitter.com/palmin"><img src="https://img.shields.io/badge/Twitter-@palmin-blue.svg?style=flat" alt="Twitter"/></a>
 </p>
 
+# Open in Place
 Minimal example app that illustrates how to get open-in-place to work well with iOS document providers.
 
 It shows how to:
