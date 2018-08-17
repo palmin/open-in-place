@@ -152,7 +152,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         for dropItem in coordinator.items {
             let itemProvider = dropItem.dragItem.itemProvider
-            let uti = itemProvider.registeredTypeIdentifiers.first as! String? ?? "public.data"
+            let uti = itemProvider.registeredTypeIdentifiers.first ?? "public.data"
             itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: uti,
                                                        completionHandler: {(url, inPlace, error) in
                 if error != nil { self.showError(error!) }
