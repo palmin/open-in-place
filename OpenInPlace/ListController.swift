@@ -23,6 +23,10 @@
 //   6) how to watch a directory for changes:
 //    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
 //
+//   7) use WorkingCopyUrlService file-provider SDK to get app icon and file information for
+//    entries inside the Working Copy Location:
+//    tableView(_ tableView, cellForRowAt)
+//
 //  Created by Anders Borum on 21/06/2017.
 //  Copyright © 2017 Applied Phasor. All rights reserved.
 //
