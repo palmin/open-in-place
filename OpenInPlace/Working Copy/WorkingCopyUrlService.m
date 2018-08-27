@@ -102,6 +102,8 @@
       completionHandler:(void (^_Nonnull)(WorkingCopyUrlService* _Nullable service,
                                           NSError* _Nullable error))completionHandler {
     
+    BOOL securityScoped = [url startAccessingSecurityScopedResource];
+    
     [[NSFileManager defaultManager] getFileProviderServicesForItemAtURL:url
                                                       completionHandler:^(NSDictionary* services,
                                                                           NSError* error) {
@@ -111,12 +113,20 @@
               dispatch_async(dispatch_get_main_queue(), ^{
                   completionHandler(nil, error);
               });
+              if(securityScoped) {
+                  [url stopAccessingSecurityScopedResource];
+              }
               return;
           }
                                                           
           // attempt connection
           [providerService getFileProviderConnectionWithCompletionHandler:^(NSXPCConnection* connection,
                                                                             NSError* error) {
+              
+              if(securityScoped) {
+                  [url stopAccessingSecurityScopedResource];
+              }
+              
               // make sure we have connection
               if(error != nil || connection == nil) {
                   dispatch_async(dispatch_get_main_queue(), ^{
@@ -130,7 +140,7 @@
               dispatch_async(dispatch_get_main_queue(), ^{
                   completionHandler(service, nil);
               });
-          }];
+        }];
     }];
 }
 
