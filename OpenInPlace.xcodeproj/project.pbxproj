@@ -15,6 +15,7 @@
 		BE24B3F61EFB02A4002D5D2A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE24B3F41EFB02A4002D5D2A /* LaunchScreen.storyboard */; };
 		BE7BBD301EFBB947003FE5D4 /* UrlCoordination.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */; };
 		BE7BBD321EFBBA26003FE5D4 /* ShowError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */; };
+		BEDCB31C2126FB33000547BA /* WorkingCopyUrlService.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDCB31B2126FB32000547BA /* WorkingCopyUrlService.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,9 @@
 		BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlCoordination.swift; sourceTree = "<group>"; };
 		BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowError.swift; sourceTree = "<group>"; };
 		BEC920D11EFBF9D100F142B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		BEDCB3192126FB30000547BA /* OpenInPlace-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenInPlace-Bridging-Header.h"; sourceTree = "<group>"; };
+		BEDCB31A2126FB32000547BA /* WorkingCopyUrlService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkingCopyUrlService.h; sourceTree = "<group>"; };
+		BEDCB31B2126FB32000547BA /* WorkingCopyUrlService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WorkingCopyUrlService.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,7 @@
 		BE24B3E81EFB02A3002D5D2A /* OpenInPlace */ = {
 			isa = PBXGroup;
 			children = (
+				BEDCB31D2126FB3A000547BA /* Working Copy */,
 				BE24B3E91EFB02A3002D5D2A /* AppDelegate.swift */,
 				BE24B3ED1EFB02A3002D5D2A /* EditController.swift */,
 				BE24B3EB1EFB02A3002D5D2A /* ListController.swift */,
@@ -73,8 +78,18 @@
 				BE24B3F21EFB02A3002D5D2A /* Assets.xcassets */,
 				BE24B3FD1EFB02BD002D5D2A /* OpenInPlace.entitlements */,
 				BE24B3F71EFB02A4002D5D2A /* Info.plist */,
+				BEDCB3192126FB30000547BA /* OpenInPlace-Bridging-Header.h */,
 			);
 			path = OpenInPlace;
+			sourceTree = "<group>";
+		};
+		BEDCB31D2126FB3A000547BA /* Working Copy */ = {
+			isa = PBXGroup;
+			children = (
+				BEDCB31A2126FB32000547BA /* WorkingCopyUrlService.h */,
+				BEDCB31B2126FB32000547BA /* WorkingCopyUrlService.m */,
+			);
+			path = "Working Copy";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,6 +171,7 @@
 			files = (
 				BE7BBD301EFBB947003FE5D4 /* UrlCoordination.swift in Sources */,
 				BE24B3EE1EFB02A3002D5D2A /* EditController.swift in Sources */,
+				BEDCB31C2126FB33000547BA /* WorkingCopyUrlService.m in Sources */,
 				BE24B3EC1EFB02A3002D5D2A /* ListController.swift in Sources */,
 				BE24B3EA1EFB02A3002D5D2A /* AppDelegate.swift in Sources */,
 				BE7BBD321EFBBA26003FE5D4 /* ShowError.swift in Sources */,
@@ -299,6 +315,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
@@ -306,6 +323,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appliedphasor.OpenInPlace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "OpenInPlace/OpenInPlace-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -316,6 +335,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
@@ -323,6 +343,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appliedphasor.OpenInPlace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "OpenInPlace/OpenInPlace-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
