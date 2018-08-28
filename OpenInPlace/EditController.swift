@@ -61,7 +61,9 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     private var urlService: WorkingCopyUrlService?
     
     private func loadStatusWithService(_ service: WorkingCopyUrlService) {
-        service.fetchStatus(completionHandler: { (linesAdded, linesDeleted, error) in
+        service.fetchStatus(completionHandler: { (linesAdded, linesDeleted,
+                                                  hash, author, avatar, when,
+                                                  error) in
             
             if linesAdded == 0 && linesDeleted == 0 {
                 self.status = ""

@@ -93,18 +93,23 @@
     }];
 }
 
--(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded, NSUInteger linesDeleted,
+-(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded,
+                                                          NSUInteger linesDeleted,
+                                                          NSString* _Nullable commitIdentifier,
+                                                          NSString* _Nullable commitAuthor,
+                                                          UIImage* _Nullable commitAvatar,
+                                                          NSDate* _Nullable commitDate,
                                                           NSError* _Nullable error))completionHandler {
     if(proxy2 == nil) {
         NSString* message = NSLocalizedString(@"Status check requires Working Copy 3.5.0 or later.", nil);
         NSDictionary* userInfo = @{NSLocalizedDescriptionKey: message};
         NSError* error = [NSError errorWithDomain:@"Working Copy" code:400 userInfo:userInfo];
-        completionHandler(0,0, error);
+        completionHandler(0,0, nil,nil,nil,nil, error);
         return;
     }
     
     errorHandler = ^(NSError* error) {
-        completionHandler(0,0, error);
+        completionHandler(0,0, nil,nil,nil,nil, error);
     };
     
     [proxy2 fetchStatusAvatarLength:100
@@ -121,7 +126,10 @@
         UIImage* avatar = commitAvatarPng == nil ? nil : [UIImage imageWithData:commitAvatarPng];
                     
         dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandler(linesAdded, linesDeleted, theError);
+            completionHandler(linesAdded, linesDeleted,
+                              commitIdentifier, commitAuthor,
+                              avatar, commitDate,
+                              theError);
         });
     }];
 }

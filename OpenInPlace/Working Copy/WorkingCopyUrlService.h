@@ -34,7 +34,12 @@
                                                                       UIImage* _Nullable appIcon,
                                                                       NSError* _Nullable error))completionHandler;
 
--(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded, NSUInteger linesDeleted,
+-(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded,
+                                                          NSUInteger linesDeleted,
+                                                          NSString* _Nullable commitIdentifier,
+                                                          NSString* _Nullable commitAuthor,
+                                                          UIImage* _Nullable commitAvatar,
+                                                          NSDate* _Nullable commitDate,
                                                           NSError* _Nullable error))completionHandler;
 
 @end
