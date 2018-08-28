@@ -7,7 +7,7 @@
 //    loadContent()
 //
 //   2) write back content in coordinated manner:
-//     writeContentIfNeeded() and writeContentShowingError()
+//     writeContentIfNeeded() and writeContentUpdatingUI()
 //
 //   3) observe changes and coordinate with other processes accessing file:
 //    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
@@ -28,6 +28,10 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     
     @IBOutlet var textView: UITextView!
     
+    private func refreshTitle() {
+        navigationItem.title = (_url?.lastPathComponent ?? "") + " " + status
+    }
+    
     private func loadContent() {
         // do not load unless we have both url and view loaded
         guard isViewLoaded else { return }
@@ -37,7 +41,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             return
         }
         
-        navigationItem.title = _url?.lastPathComponent
+        refreshTitle()
         
         let coordinator = NSFileCoordinator(filePresenter: self)
         url!.coordinatedRead(coordinator, callback: { (text, error) in
@@ -50,6 +54,48 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                 }
             }
         })
+    }
+    
+    private var status = ""
+
+    private var urlService: WorkingCopyUrlService?
+    
+    private func loadStatusWithService(_ service: WorkingCopyUrlService) {
+        service.fetchStatus(completionHandler: { (linesAdded, linesDeleted, error) in
+            
+            if linesAdded == 0 && linesDeleted == 0 {
+                self.status = ""
+            } else if linesAdded == NSNotFound || linesDeleted == NSNotFound {
+                self.status = "binary"
+            } else {
+                self.status = "+\(linesAdded)-\(linesDeleted)"
+            }
+            
+            self.refreshTitle()
+        })
+    }
+    
+    private func loadStatus() {
+        guard let url = url else { return }
+        
+        if #available(iOS 11.0, *) {
+            
+            // try to use existing service instance
+            if let service = urlService {
+                loadStatusWithService(service)
+                return
+            }
+            
+            // Try to get file provider icon from Working Copy service.
+            WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
+                // the service might very well be missing if you are picking from some other
+                // Location than Working Copy or the version of Working Copy isn't new enough
+                guard let service = service else { return }
+                self.urlService = service
+
+                self.loadStatusWithService(service)
+            })
+        }
     }
     
     private var unwrittenChanges = false
@@ -72,12 +118,14 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     }
     
     // calls writeContentIfNeeded(callback:) showing errors
-    @objc private func writeContentShowingError() {
+    @objc private func writeContentUpdatingUI() {
         
         writeContentIfNeeded(callback: { error in
-            if(error != nil) {
-                DispatchQueue.main.async {
-                    self.showError(error!)
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.showError(error)
+                } else {
+                    self.loadStatus()
                 }
             }
         })
@@ -86,6 +134,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadContent()
+        loadStatus()
         
         let notifications = NotificationCenter.default
         notifications.addObserver(self, selector: #selector(appMovedToBackground),
@@ -121,6 +170,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             }
             
             _url = newValue
+            urlService = nil
             
             if(_url != nil) {
                 securityScoped = _url!.startAccessingSecurityScopedResource()
@@ -128,6 +178,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                 isFilePresenting = true
             }
             loadContent()
+            loadStatus()
         }
         get {
             return _url
@@ -185,7 +236,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         }
         
         // write if anything is pending
-        writeContentShowingError()
+        writeContentUpdatingUI()
     }
     
     @objc func appMovedToForeground() {
@@ -204,11 +255,10 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         // we want to write changes, but not after every keystroke and wait for a
         // whole second without changes
         unwrittenChanges = true
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(writeContentShowingError), object: nil)
-        perform(#selector(writeContentShowingError), with: nil, afterDelay: 1.0)
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(writeContentUpdatingUI), object: nil)
+        perform(#selector(writeContentUpdatingUI), with: nil, afterDelay: 1.0)
     }
     
     //MARK: -
-    
 }
 

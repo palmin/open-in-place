@@ -8,6 +8,9 @@
 
 #import "WorkingCopyUrlService.h"
 
+#define ServiceNameVer1 @"working-copy-v1"
+#define ServiceNameVer2 @"working-copy-v2"
+
 @protocol WorkingCopyProtocolVer1
 
 -(void)determineDeepLinkWithCompletionHandler:(void (^)(NSURL* url))completionHandler;
@@ -19,9 +22,31 @@
 
 @end
 
+@protocol WorkingCopyProtocolVer2 <WorkingCopyProtocolVer1>
+
+-(void)fetchStatusAvatarLength:(NSUInteger)length // 0 to not get back avatar
+             completionHandler:(void (^)(NSUInteger linesAdded,
+                                         NSUInteger linesDeleted,
+                                         NSString* commitIdentifier,
+                                         NSString* commitAuthor,
+                                         NSData* commitAvatarPng,
+                                         NSDate* commitDate,
+                                         NSError* error))completionHandler;
+
+-(void)fetchBlameAtLocation:(NSUInteger)location // NSNotFound to not check blame for location
+               avatarLength:(NSUInteger)length // 0 to not get back avatar
+          completionHandler:(void (^)(NSString* commitIdentifier,
+                                      NSString* commitAuthor,
+                                      NSData* commitAvatarPng,
+                                      NSDate* commitDate,
+                                      NSError* error))completionHandler;
+
+@end
+
 @interface WorkingCopyUrlService () {
     NSXPCConnection* connection;
-    id<WorkingCopyProtocolVer1> proxy;
+    id<WorkingCopyProtocolVer1> proxy1;
+    id<WorkingCopyProtocolVer2> proxy2;
 
     NSError* error;
     void (^errorHandler)(NSError* error);
@@ -37,7 +62,7 @@
         completionHandler(nil, error);
     };
     
-    [proxy determineDeepLinkWithCompletionHandler:^(NSURL* url) {
+    [proxy1 determineDeepLinkWithCompletionHandler:^(NSURL* url) {
         NSError* theError = [self->error copy];
 
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -55,7 +80,7 @@
         completionHandler(nil, nil, nil, nil, error);
     };
     
-    [proxy fetchDocumentSourceInfoWithCompletionHandler:^(NSString* path,
+    [proxy1 fetchDocumentSourceInfoWithCompletionHandler:^(NSString* path,
                                                           NSString* appName,
                                                           NSString* appVersion,
                                                           NSData* iconPNG) {
@@ -68,15 +93,56 @@
     }];
 }
 
--(instancetype)initWithConnection:(NSXPCConnection*)theConnection {
+-(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded, NSUInteger linesDeleted,
+                                                          NSError* _Nullable error))completionHandler {
+    if(proxy2 == nil) {
+        NSString* message = NSLocalizedString(@"Status check requires Working Copy 3.5.0 or later.", nil);
+        NSDictionary* userInfo = @{NSLocalizedDescriptionKey: message};
+        NSError* error = [NSError errorWithDomain:@"Working Copy" code:400 userInfo:userInfo];
+        completionHandler(0,0, error);
+        return;
+    }
+    
+    errorHandler = ^(NSError* error) {
+        completionHandler(0,0, error);
+    };
+    
+    [proxy2 fetchStatusAvatarLength:100
+                  completionHandler:^(NSUInteger linesAdded,
+                                      NSUInteger linesDeleted,
+                                      NSString* commitIdentifier,
+                                      NSString* commitAuthor,
+                                      NSData* commitAvatarPng,
+                                      NSDate* commitDate,
+                                      NSError* error) {
+                    
+        NSError* theError = error ?: [self->error copy];
+                      
+        UIImage* avatar = commitAvatarPng == nil ? nil : [UIImage imageWithData:commitAvatarPng];
+                    
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(linesAdded, linesDeleted, theError);
+        });
+    }];
+}
+
+-(instancetype)initWithConnection:(NSXPCConnection*)theConnection
+                      serviceName:(NSString*)serviceName {
     self = [super init];
     if(self != nil) {
         connection = theConnection;
 
-        connection.remoteObjectInterface = [NSXPCInterface interfaceWithProtocol:@protocol(WorkingCopyProtocolVer1)];
+        Protocol* protocol = nil;
+        if([serviceName isEqualToString:ServiceNameVer2]) {
+            protocol = @protocol(WorkingCopyProtocolVer2);
+        } else {
+            protocol = @protocol(WorkingCopyProtocolVer1);
+        }
+        
+        connection.remoteObjectInterface = [NSXPCInterface interfaceWithProtocol:protocol];
         [connection resume];
         
-        proxy = [connection remoteObjectProxyWithErrorHandler:^(NSError* theError) {
+        proxy1 = [connection remoteObjectProxyWithErrorHandler:^(NSError* theError) {
             self->error = theError;
             [self->connection invalidate];
             
@@ -88,8 +154,11 @@
                     copy(theError);
                 });
             }
-
         }];
+        
+        if([serviceName isEqualToString:ServiceNameVer2]) {
+            proxy2 = (id<WorkingCopyProtocolVer2>)proxy1;
+        }
     }
     return self;
 }
@@ -108,7 +177,9 @@
                                                       completionHandler:^(NSDictionary* services,
                                                                           NSError* error) {
           // check that we have provider service
-          NSFileProviderService* providerService = services[@"working-copy-v1"];
+          NSFileProviderService* providerService = services[ServiceNameVer2];
+          if(providerService == nil) providerService = services[ServiceNameVer1];
+                                                          
           if(error != nil || providerService == nil) {
               dispatch_async(dispatch_get_main_queue(), ^{
                   completionHandler(nil, error);
@@ -136,7 +207,8 @@
               }
              
               // setup proxy object
-              WorkingCopyUrlService* service = [[WorkingCopyUrlService alloc] initWithConnection:connection];
+              WorkingCopyUrlService* service = [[WorkingCopyUrlService alloc] initWithConnection:connection
+                                                                                     serviceName:providerService.name];
               dispatch_async(dispatch_get_main_queue(), ^{
                   completionHandler(service, nil);
               });

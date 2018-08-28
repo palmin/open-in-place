@@ -34,4 +34,7 @@
                                                                       UIImage* _Nullable appIcon,
                                                                       NSError* _Nullable error))completionHandler;
 
+-(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded, NSUInteger linesDeleted,
+                                                          NSError* _Nullable error))completionHandler;
+
 @end
