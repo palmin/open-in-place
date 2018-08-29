@@ -10,6 +10,8 @@
 
 @interface WorkingCopyUrlService : NSObject
 
+#warning "This is a experimental version of WorkingCopyUrlService that might change. Find the stable version at https://github.com/palmin/open-in-place/tree/master/OpenInPlace/Working%20Copy"
+
 // Try to inquire and connect to WorkingCopyUrlService on the given URL.
 // Note that you can get a nil-service even without a error when url is outside
 // a Working Copy file provider.
