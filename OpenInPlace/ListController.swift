@@ -118,50 +118,6 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         }
     }
     
-    
-    // add button to cell, that when tapped to open a deep link
-    @available(iOS 11.0, *)
-    func addDeepLinkButton(_ cell: UITableViewCell) {
-        let button = UIButton(type: .system)
-        button.setTitle(NSLocalizedString("Deep link", comment: ""), for: .normal)
-        button.sizeToFit()
-        button.addTarget(self, action: #selector(openDeepLink), for: .touchDown)
-        cell.accessoryView = button
-    }
-    
-    @available(iOS 11.0, *)
-    @objc func openDeepLink(sender: UIButton) {
-        // find cell with button sending this
-        var view: UIView = sender
-        while !(view is UITableViewCell) {
-            guard let next = view.superview else { return }
-            view = next
-        }
-        
-        // get indexPath from cell to get url
-        guard let indexPath = tableView.indexPath(for: view as! UITableViewCell) else {
-            return
-        }
-        let url = urls[indexPath.row]
-        
-        WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
-            // the service might very well be missing if you are picking from some other
-            // Location than Working Copy or the version of Working Copy isn't new enough
-            guard let service = service else { return }
-            
-            // request deep link
-            service.determineDeepLink(completionHandler: { (url, error) in
-                if let error = error {
-                    self.showError(error)
-                }
-                
-                if let url = url {
-                    UIApplication.shared.openURL(url)
-                }
-            })
-        })
-    }
-    
     // MARK: - Segues
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -254,8 +210,6 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                     cell.imageView?.image = icon
                     cell.setNeedsLayout()
                 })
-                
-                self.addDeepLinkButton(cell)
             })
         }
         
