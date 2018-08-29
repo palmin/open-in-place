@@ -77,25 +77,21 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             }
             
             if error == nil {
-                // make sure we have status in navigation var
+                // make sure we have avatar + status in navigation bar
                 if self.navigationItem.rightBarButtonItem == nil {
-                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.statusView)
+                    
+                    let imageView = self.avatarView!
+                    imageView.translatesAutoresizingMaskIntoConstraints = true
+                    imageView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+                    
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: imageView)
+                    self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.statusView)
                 }
             } else {
                 self.statusLabel.text = error!.localizedDescription
             }
             
-            if let image = avatar {
-                // make sure avatar image is shown
-                let imageView = self.avatarView!
-                if imageView.isHidden {
-                    imageView.isHidden = false
-                    imageView.frame = CGRect(x: 0, y: 0, width: 28, height: 28)
-                    self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: imageView)
-                }
-                
-                imageView.image = image
-            }
+            self.avatarView.image = avatar
         })
     }
     
