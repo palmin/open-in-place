@@ -24,17 +24,17 @@
 
 @protocol WorkingCopyProtocolVer2 <WorkingCopyProtocolVer1>
 
--(void)fetchStatusAvatarLength:(NSUInteger)length // 0 to not get back avatar
-             completionHandler:(void (^)(NSUInteger linesAdded,
-                                         NSUInteger linesDeleted,
-                                         NSString* commitIdentifier,
-                                         NSString* commitAuthor,
-                                         NSData* commitAvatarPng,
-                                         NSDate* commitDate,
-                                         NSError* error))completionHandler;
+-(void)fetchStatusWithAvatar:(BOOL)includeAvatar
+           completionHandler:(void (^)(NSUInteger linesAdded,
+                                       NSUInteger linesDeleted,
+                                       NSString* commitIdentifier,
+                                       NSString* commitAuthor,
+                                       NSData* commitAvatarPng,
+                                       NSDate* commitDate,
+                                       NSError* error))completionHandler;
 
--(void)fetchBlameAtLocation:(NSUInteger)location // NSNotFound to not check blame for location
-               avatarLength:(NSUInteger)length // 0 to not get back avatar
+-(void)fetchBlameAtLocation:(NSUInteger)location
+                 withAvatar:(BOOL)includeAvatar
           completionHandler:(void (^)(NSString* commitIdentifier,
                                       NSString* commitAuthor,
                                       NSData* commitAvatarPng,
@@ -112,15 +112,15 @@
         completionHandler(0,0, nil,nil,nil,nil, error);
     };
     
-    [proxy2 fetchStatusAvatarLength:100
-                  completionHandler:^(NSUInteger linesAdded,
-                                      NSUInteger linesDeleted,
-                                      NSString* commitIdentifier,
-                                      NSString* commitAuthor,
-                                      NSData* commitAvatarPng,
-                                      NSDate* commitDate,
-                                      NSError* error) {
-                    
+    [proxy2 fetchStatusWithAvatar:YES
+                completionHandler:^(NSUInteger linesAdded,
+                                    NSUInteger linesDeleted,
+                                    NSString* commitIdentifier,
+                                    NSString* commitAuthor,
+                                    NSData* commitAvatarPng,
+                                    NSDate* commitDate,
+                                    NSError* error) {
+                
         NSError* theError = error ?: [self->error copy];
                       
         UIImage* avatar = commitAvatarPng == nil ? nil : [UIImage imageWithData:commitAvatarPng];
