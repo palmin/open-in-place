@@ -47,11 +47,40 @@
                                     <outlet property="delegate" destination="JEX-9P-axG" id="bfJ-oL-2pX"/>
                                 </connections>
                             </textView>
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WAn-t2-dnP">
+                                <rect key="frame" x="335" y="69" width="30" height="20"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EsI-xt-Qhq">
+                                        <rect key="frame" x="5" y="5" width="15" height="10"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UFx-dB-q6V">
+                                        <rect key="frame" x="0.0" y="-10" width="30" height="30"/>
+                                        <connections>
+                                            <action selector="openChangesDeepLink:" destination="JEX-9P-axG" eventType="touchUpInside" id="Vwh-DZ-h3T"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="0.6989495141165597" alpha="0.80000000000000004" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="UFx-dB-q6V" firstAttribute="top" secondItem="WAn-t2-dnP" secondAttribute="top" constant="-10" id="5LB-eQ-bHr"/>
+                                    <constraint firstAttribute="bottom" secondItem="EsI-xt-Qhq" secondAttribute="bottom" constant="5" id="7bE-J9-4de"/>
+                                    <constraint firstItem="UFx-dB-q6V" firstAttribute="leading" secondItem="WAn-t2-dnP" secondAttribute="leading" id="CZO-qb-j9u"/>
+                                    <constraint firstAttribute="bottom" secondItem="UFx-dB-q6V" secondAttribute="bottom" id="Cjj-MX-QLF"/>
+                                    <constraint firstItem="EsI-xt-Qhq" firstAttribute="top" secondItem="WAn-t2-dnP" secondAttribute="top" constant="5" id="c0g-dP-IiG"/>
+                                    <constraint firstAttribute="trailing" secondItem="UFx-dB-q6V" secondAttribute="trailing" id="f0N-TZ-Ayn"/>
+                                    <constraint firstItem="EsI-xt-Qhq" firstAttribute="leading" secondItem="WAn-t2-dnP" secondAttribute="leading" constant="5" id="rOU-Ru-Csf"/>
+                                    <constraint firstAttribute="trailing" secondItem="EsI-xt-Qhq" secondAttribute="trailing" constant="10" id="w7T-jg-4HH"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="7lp-gm-wH0" firstAttribute="top" secondItem="SYR-Wa-9uf" secondAttribute="bottom" id="DOc-Wb-NR3"/>
                             <constraint firstAttribute="trailingMargin" secondItem="7lp-gm-wH0" secondAttribute="trailing" id="FJg-19-KXm"/>
+                            <constraint firstAttribute="trailing" secondItem="WAn-t2-dnP" secondAttribute="trailing" constant="10" id="JFS-mV-83W"/>
+                            <constraint firstItem="WAn-t2-dnP" firstAttribute="top" secondItem="SYR-Wa-9uf" secondAttribute="bottom" constant="5" id="foz-EO-gEh"/>
                             <constraint firstItem="7lp-gm-wH0" firstAttribute="leading" secondItem="svH-Pt-448" secondAttribute="leadingMargin" id="hdS-3W-gEa"/>
                             <constraint firstItem="GAO-Cl-Wes" firstAttribute="top" secondItem="7lp-gm-wH0" secondAttribute="bottom" id="j13-7e-RCu"/>
                         </constraints>
@@ -59,12 +88,14 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM"/>
                     <connections>
+                        <outlet property="statusLabel" destination="EsI-xt-Qhq" id="JCf-1U-5qE"/>
+                        <outlet property="statusView" destination="WAn-t2-dnP" id="faw-Jl-hsM"/>
                         <outlet property="textView" destination="7lp-gm-wH0" id="ZTc-m2-CMo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="709" y="129"/>
+            <point key="canvasLocation" x="708" y="128.18590704647679"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="Nki-YV-4Qg">
@@ -104,6 +135,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="bgM-YI-LPV">
+                                            <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </imageView>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nYq-Sh-wB7">
@@ -135,6 +167,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rNY-gL-yHN">
+                                            <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </imageView>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text=" " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="JmZ-ws-Dug">

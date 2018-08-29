@@ -27,10 +27,8 @@ import UIKit
 class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     
     @IBOutlet var textView: UITextView!
-    
-    private func refreshTitle() {
-        navigationItem.title = (_url?.lastPathComponent ?? "") + " " + status
-    }
+    @IBOutlet var statusView: UIView!
+    @IBOutlet var statusLabel: UILabel!
     
     private func loadContent() {
         // do not load unless we have both url and view loaded
@@ -41,7 +39,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             return
         }
         
-        refreshTitle()
+        navigationItem.title = _url?.lastPathComponent
         
         let coordinator = NSFileCoordinator(filePresenter: self)
         url!.coordinatedRead(coordinator, callback: { (text, error) in
@@ -56,8 +54,6 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         })
     }
     
-    private var status = ""
-
     private var urlService: WorkingCopyUrlService?
     
     private func loadStatusWithService(_ service: WorkingCopyUrlService) {
@@ -66,14 +62,42 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                                                   error) in
             
             if linesAdded == 0 && linesDeleted == 0 {
-                self.status = ""
+                self.statusLabel.text = "current"
             } else if linesAdded == NSNotFound || linesDeleted == NSNotFound {
-                self.status = "binary"
+                self.statusLabel.text = "binary"
             } else {
-                self.status = "+\(linesAdded)-\(linesDeleted)"
+                let green = [NSAttributedStringKey.foregroundColor: UIColor.green];
+                let red = [NSAttributedStringKey.foregroundColor: UIColor.red];
+
+                let string = NSMutableAttributedString()
+                string.append(NSAttributedString(string: "-\(linesDeleted) ", attributes: red))
+                string.append(NSAttributedString(string: "+\(linesAdded)", attributes: green))
+                self.statusLabel.attributedText = string
             }
             
-            self.refreshTitle()
+            if error == nil {
+                self.statusView.alpha = 1
+                self.statusView.layer.cornerRadius = 7
+            } else {
+                self.statusLabel.text = error!.localizedDescription
+            }
+        })
+    }
+    
+    @IBAction func openChangesDeepLink(_ sender: Any) {
+        guard let service = urlService else { return }
+        
+        // request deep link
+        service.determineDeepLink(completionHandler: { (url, error) in
+            if let error = error {
+                self.showError(error)
+            }
+            
+            if let url = url {
+                if let changesUrl = URL(string: url.absoluteString + "&mode=changes") {
+                    UIApplication.shared.openURL(changesUrl)
+                }
+            }
         })
     }
     
