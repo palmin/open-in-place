@@ -57,14 +57,19 @@
                         </constraints>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM"/>
+                    <navigationItem key="navigationItem" title="Detail" leftItemsSupplementBackButton="YES" id="mOI-FS-AaM"/>
                     <connections>
+                        <outlet property="avatarView" destination="iZK-rI-yOF" id="yjL-lf-yyB"/>
                         <outlet property="statusLabel" destination="EsI-xt-Qhq" id="JCf-1U-5qE"/>
                         <outlet property="statusView" destination="WAn-t2-dnP" id="faw-Jl-hsM"/>
                         <outlet property="textView" destination="7lp-gm-wH0" id="ZTc-m2-CMo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
+                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="iZK-rI-yOF">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                </imageView>
                 <view clipsSubviews="YES" contentMode="scaleToFill" id="WAn-t2-dnP">
                     <rect key="frame" x="0.0" y="0.0" width="30" height="20"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

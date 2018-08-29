@@ -29,6 +29,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     @IBOutlet var textView: UITextView!
     @IBOutlet var statusView: UIView!
     @IBOutlet var statusLabel: UILabel!
+    @IBOutlet var avatarView: UIImageView!
     
     private func loadContent() {
         // do not load unless we have both url and view loaded
@@ -82,6 +83,18 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                 }
             } else {
                 self.statusLabel.text = error!.localizedDescription
+            }
+            
+            if let image = avatar {
+                // make sure avatar image is shown
+                let imageView = self.avatarView!
+                if imageView.isHidden {
+                    imageView.isHidden = false
+                    imageView.frame = CGRect(x: 0, y: 0, width: 28, height: 28)
+                    self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: imageView)
+                }
+                
+                imageView.image = image
             }
         })
     }
