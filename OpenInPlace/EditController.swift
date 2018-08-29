@@ -76,8 +76,10 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             }
             
             if error == nil {
-                self.statusView.alpha = 1
-                self.statusView.layer.cornerRadius = 7
+                // make sure we have status in navigation var
+                if self.navigationItem.rightBarButtonItem == nil {
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.statusView)
+                }
             } else {
                 self.statusLabel.text = error!.localizedDescription
             }
