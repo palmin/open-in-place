@@ -113,6 +113,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     }
     
     private func loadStatus() {
+        guard isViewLoaded else { return }
         guard let url = url else { return }
         
         if #available(iOS 11.0, *) {
