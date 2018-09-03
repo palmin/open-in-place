@@ -95,7 +95,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         })
     }
     
-    @IBAction func openChangesDeepLink(_ sender: Any) {
+    @IBAction func statusTapped(_ sender: Any) {
         guard let service = urlService else { return }
         
         // request deep link
@@ -104,11 +104,11 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                 self.showError(error)
             }
             
-            if let url = url {
-                if let changesUrl = URL(string: url.absoluteString + "&mode=changes") {
-                    UIApplication.shared.openURL(changesUrl)
-                }
-            }
+            guard let url = url else { return }
+            guard let escaped = url.absoluteString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else { return }
+            guard let callbackUrl = URL(string: "working-copy://x-callback-url/commit?url=\(escaped)&x-cancel=open-in-place://&x-success=open-in-place://") else { return }
+
+            UIApplication.shared.openURL(callbackUrl)
         })
     }
     
@@ -275,6 +275,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         
         // write if anything is pending
         writeContentUpdatingUI()
+        
     }
     
     @objc func appMovedToForeground() {
@@ -285,6 +286,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         }
         
         loadContent()
+        loadStatus()
     }
     
     //MARK: - UITextViewDelegate
