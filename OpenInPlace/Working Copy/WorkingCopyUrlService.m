@@ -27,19 +27,7 @@
 -(void)fetchStatusWithAvatar:(BOOL)includeAvatar
            completionHandler:(void (^)(NSUInteger linesAdded,
                                        NSUInteger linesDeleted,
-                                       NSString* commitIdentifier,
-                                       NSString* commitAuthor,
-                                       NSData* commitAvatarPng,
-                                       NSDate* commitDate,
                                        NSError* error))completionHandler;
-
--(void)fetchBlameAtLocation:(NSUInteger)location
-                 withAvatar:(BOOL)includeAvatar
-          completionHandler:(void (^)(NSString* commitIdentifier,
-                                      NSString* commitAuthor,
-                                      NSData* commitAvatarPng,
-                                      NSDate* commitDate,
-                                      NSError* error))completionHandler;
 
 @end
 
@@ -95,40 +83,28 @@
 
 -(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded,
                                                           NSUInteger linesDeleted,
-                                                          NSString* _Nullable commitIdentifier,
-                                                          NSString* _Nullable commitAuthor,
-                                                          UIImage* _Nullable commitAvatar,
-                                                          NSDate* _Nullable commitDate,
                                                           NSError* _Nullable error))completionHandler {
     if(proxy2 == nil) {
         NSString* message = NSLocalizedString(@"Status check requires Working Copy 3.5.0 or later.", nil);
         NSDictionary* userInfo = @{NSLocalizedDescriptionKey: message};
         NSError* error = [NSError errorWithDomain:@"Working Copy" code:400 userInfo:userInfo];
-        completionHandler(0,0, nil,nil,nil,nil, error);
+        completionHandler(0,0, error);
         return;
     }
     
     errorHandler = ^(NSError* error) {
-        completionHandler(0,0, nil,nil,nil,nil, error);
+        completionHandler(0,0, error);
     };
     
     [proxy2 fetchStatusWithAvatar:YES
                 completionHandler:^(NSUInteger linesAdded,
                                     NSUInteger linesDeleted,
-                                    NSString* commitIdentifier,
-                                    NSString* commitAuthor,
-                                    NSData* commitAvatarPng,
-                                    NSDate* commitDate,
                                     NSError* error) {
                 
         NSError* theError = error ?: [self->error copy];
-                      
-        UIImage* avatar = commitAvatarPng == nil ? nil : [UIImage imageWithData:commitAvatarPng];
                     
         dispatch_async(dispatch_get_main_queue(), ^{
             completionHandler(linesAdded, linesDeleted,
-                              commitIdentifier, commitAuthor,
-                              avatar, commitDate,
                               theError);
         });
     }];

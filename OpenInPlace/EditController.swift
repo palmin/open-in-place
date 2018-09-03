@@ -29,7 +29,6 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     @IBOutlet var textView: UITextView!
     @IBOutlet var statusView: UIView!
     @IBOutlet var statusLabel: UILabel!
-    @IBOutlet var avatarView: UIImageView!
     
     private func loadContent() {
         // do not load unless we have both url and view loaded
@@ -58,12 +57,11 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     private var urlService: WorkingCopyUrlService?
     
     private func loadStatusWithService(_ service: WorkingCopyUrlService) {
-        service.fetchStatus(completionHandler: { (linesAdded, linesDeleted,
-                                                  hash, author, avatar, when,
-                                                  error) in
+        service.fetchStatus(completionHandler: {
+          (linesAdded, linesDeleted, error) in
             
             if linesAdded == 0 && linesDeleted == 0 {
-                self.statusLabel.text = "current"
+                self.statusLabel.text = ""
             } else if linesAdded == NSNotFound || linesDeleted == NSNotFound {
                 self.statusLabel.text = "binary"
             } else {
@@ -77,21 +75,14 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             }
             
             if error == nil {
-                // make sure we have avatar + status in navigation bar
+                // make sure we have status in navigation bar
                 if self.navigationItem.rightBarButtonItem == nil {
                     
-                    let imageView = self.avatarView!
-                    imageView.translatesAutoresizingMaskIntoConstraints = true
-                    imageView.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-                    
-                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: imageView)
-                    self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.statusView)
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.statusView)
                 }
             } else {
                 self.statusLabel.text = error!.localizedDescription
             }
-            
-            self.avatarView.image = avatar
         })
     }
     
