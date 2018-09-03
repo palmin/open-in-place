@@ -36,6 +36,9 @@
                                                                       UIImage* _Nullable appIcon,
                                                                       NSError* _Nullable error))completionHandler;
 
+// Determine the lines added or deleted for the file at the given URL compared to last commit.
+// If the file is current both lines added and deleted are zero, while NSNotFound indicates
+// a modified binary file.
 -(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded,
                                                           NSUInteger linesDeleted,
                                                           NSError* _Nullable error))completionHandler;
