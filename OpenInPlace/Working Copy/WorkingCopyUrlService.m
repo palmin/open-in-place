@@ -24,10 +24,9 @@
 
 @protocol WorkingCopyProtocolVer2 <WorkingCopyProtocolVer1>
 
--(void)fetchStatusWithAvatar:(BOOL)includeAvatar
-           completionHandler:(void (^)(NSUInteger linesAdded,
-                                       NSUInteger linesDeleted,
-                                       NSError* error))completionHandler;
+-(void)fetchStatusWithCompletionHandler:(void (^)(NSUInteger linesAdded,
+                                                  NSUInteger linesDeleted,
+                                                  NSError* error))completionHandler;
 
 @end
 
@@ -96,10 +95,9 @@
         completionHandler(0,0, error);
     };
     
-    [proxy2 fetchStatusWithAvatar:YES
-                completionHandler:^(NSUInteger linesAdded,
-                                    NSUInteger linesDeleted,
-                                    NSError* error) {
+    [proxy2 fetchStatusWithCompletionHandler:^(NSUInteger linesAdded,
+                                               NSUInteger linesDeleted,
+                                               NSError* error) {
                 
         NSError* theError = error ?: [self->error copy];
                     
