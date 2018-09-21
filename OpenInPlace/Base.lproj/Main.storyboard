@@ -57,7 +57,7 @@
                     </view>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Detail" leftItemsSupplementBackButton="YES" id="mOI-FS-AaM">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" style="plain" id="k7M-j8-k83">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" id="k7M-j8-k83">
                             <connections>
                                 <action selector="statusTapped:" destination="JEX-9P-axG" id="SuE-bB-SKv"/>
                             </connections>
