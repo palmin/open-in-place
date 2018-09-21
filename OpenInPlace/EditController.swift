@@ -3,7 +3,8 @@
 //  OpenInPlace
 //
 //  This view controller shows how to
-//   1) read contents in coordinated manner from a remote file from iCloud Drive or another document providers:
+//   1) read contents in coordinated manner from a remote file from iCloud Drive
+//      or another document providers:
 //    loadContent()
 //
 //   2) write back content in coordinated manner:
@@ -14,6 +15,10 @@
 //
 //   4) auto-save changes:
 //    textViewDidChange() and appMovedToBackground()
+//
+//   5) use WorkingCopyUrlService file-provider SDK to get file status and compose
+//      x-callback-url for initiating commit:
+//    loadStatusWithService() and statusTapped()
 //
 //  If you are using UIDocument you mostly get all this for free.
 //
