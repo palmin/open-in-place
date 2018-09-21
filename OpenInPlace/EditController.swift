@@ -27,8 +27,7 @@ import UIKit
 class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     
     @IBOutlet var textView: UITextView!
-    @IBOutlet var statusView: UIView!
-    @IBOutlet var statusLabel: UILabel!
+    @IBOutlet var statusButton: UIBarButtonItem!
     
     private func loadContent() {
         // do not load unless we have both url and view loaded
@@ -60,28 +59,30 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         service.fetchStatus(completionHandler: {
           (linesAdded, linesDeleted, error) in
             
-            if linesAdded == 0 && linesDeleted == 0 {
-                self.statusLabel.text = ""
-            } else if linesAdded == NSNotFound || linesDeleted == NSNotFound {
-                self.statusLabel.text = "binary"
-            } else {
-                let green = [NSAttributedStringKey.foregroundColor: UIColor.green];
-                let red = [NSAttributedStringKey.foregroundColor: UIColor.red];
-
-                let string = NSMutableAttributedString()
-                string.append(NSAttributedString(string: "-\(linesDeleted) ", attributes: red))
-                string.append(NSAttributedString(string: "+\(linesAdded)", attributes: green))
-                self.statusLabel.attributedText = string
-            }
+            self.statusButton.isEnabled = true
             
-            if error == nil {
-                // make sure we have status in navigation bar
-                if self.navigationItem.rightBarButtonItem == nil {
-                    
-                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.statusView)
-                }
-            } else {
-                self.statusLabel.text = error!.localizedDescription
+            switch (linesAdded, linesDeleted) {
+
+            case (UInt(NSNotFound), _):
+                // modified binary file
+                self.statusButton.title = "binary"
+                
+            case (0,0):
+                // file is current
+                self.statusButton.title = ""
+                self.statusButton.isEnabled = false
+                
+            case (0, _):
+                // modified text file
+                self.statusButton.title = "-\(linesDeleted)"
+
+            case (_, 0):
+                // modified text file
+                self.statusButton.title = "+\(linesAdded)"
+
+            default:
+                // modified text file
+                self.statusButton.title = "-\(linesDeleted)+\(linesAdded)"
             }
         })
     }

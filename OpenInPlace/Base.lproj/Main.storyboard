@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="H1p-Uh-vWS">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -56,41 +56,19 @@
                         </constraints>
                     </view>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Detail" leftItemsSupplementBackButton="YES" id="mOI-FS-AaM"/>
+                    <navigationItem key="navigationItem" title="Detail" leftItemsSupplementBackButton="YES" id="mOI-FS-AaM">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" style="plain" id="k7M-j8-k83">
+                            <connections>
+                                <action selector="statusTapped:" destination="JEX-9P-axG" id="SuE-bB-SKv"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
-                        <outlet property="statusLabel" destination="EsI-xt-Qhq" id="JCf-1U-5qE"/>
-                        <outlet property="statusView" destination="WAn-t2-dnP" id="faw-Jl-hsM"/>
+                        <outlet property="statusButton" destination="k7M-j8-k83" id="eMz-8h-Qq5"/>
                         <outlet property="textView" destination="7lp-gm-wH0" id="ZTc-m2-CMo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>
-                <view clipsSubviews="YES" contentMode="scaleToFill" id="WAn-t2-dnP">
-                    <rect key="frame" x="0.0" y="0.0" width="30" height="20"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EsI-xt-Qhq">
-                            <rect key="frame" x="5" y="5" width="15" height="10"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UFx-dB-q6V">
-                            <rect key="frame" x="0.0" y="-10" width="30" height="30"/>
-                            <connections>
-                                <action selector="statusTapped:" destination="JEX-9P-axG" eventType="touchUpInside" id="Vwh-DZ-h3T"/>
-                            </connections>
-                        </button>
-                    </subviews>
-                    <constraints>
-                        <constraint firstItem="UFx-dB-q6V" firstAttribute="top" secondItem="WAn-t2-dnP" secondAttribute="top" constant="-10" id="5LB-eQ-bHr"/>
-                        <constraint firstAttribute="bottom" secondItem="EsI-xt-Qhq" secondAttribute="bottom" constant="5" id="7bE-J9-4de"/>
-                        <constraint firstItem="UFx-dB-q6V" firstAttribute="leading" secondItem="WAn-t2-dnP" secondAttribute="leading" id="CZO-qb-j9u"/>
-                        <constraint firstAttribute="bottom" secondItem="UFx-dB-q6V" secondAttribute="bottom" id="Cjj-MX-QLF"/>
-                        <constraint firstItem="EsI-xt-Qhq" firstAttribute="top" secondItem="WAn-t2-dnP" secondAttribute="top" constant="5" id="c0g-dP-IiG"/>
-                        <constraint firstAttribute="trailing" secondItem="UFx-dB-q6V" secondAttribute="trailing" id="f0N-TZ-Ayn"/>
-                        <constraint firstItem="EsI-xt-Qhq" firstAttribute="leading" secondItem="WAn-t2-dnP" secondAttribute="leading" constant="5" id="rOU-Ru-Csf"/>
-                        <constraint firstAttribute="trailing" secondItem="EsI-xt-Qhq" secondAttribute="trailing" constant="10" id="w7T-jg-4HH"/>
-                    </constraints>
-                </view>
             </objects>
             <point key="canvasLocation" x="708" y="128.18590704647679"/>
         </scene>
