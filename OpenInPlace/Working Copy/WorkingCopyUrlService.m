@@ -9,7 +9,7 @@
 #import "WorkingCopyUrlService.h"
 
 #define ServiceNameVer1 @"working-copy-v1"
-#define ServiceNameVer3 @"working-copy-v3"
+#define ServiceNameVer352 @"working-copy-v3.5.2"
 
 @protocol WorkingCopyProtocolVer1
 
@@ -22,7 +22,7 @@
 
 @end
 
-@protocol WorkingCopyProtocolVer3 <WorkingCopyProtocolVer1>
+@protocol WorkingCopyProtocolVer352 <WorkingCopyProtocolVer1>
 
 -(void)fetchStatusWithCompletionHandler:(void (^)(NSUInteger linesAdded,
                                                   NSUInteger linesDeleted,
@@ -33,7 +33,7 @@
 @interface WorkingCopyUrlService () {
     NSXPCConnection* connection;
     id<WorkingCopyProtocolVer1> proxy1;
-    id<WorkingCopyProtocolVer3> proxy3;
+    id<WorkingCopyProtocolVer352> proxy352;
 
     NSError* error;
     void (^errorHandler)(NSError* error);
@@ -83,7 +83,7 @@
 -(void)fetchStatusWithCompletionHandler:(void (^_Nonnull)(NSUInteger linesAdded,
                                                           NSUInteger linesDeleted,
                                                           NSError* _Nullable error))completionHandler {
-    if(proxy3 == nil) {
+    if(proxy352 == nil) {
         NSString* message = NSLocalizedString(@"Status check requires Working Copy 3.5.2 or later.", nil);
         NSDictionary* userInfo = @{NSLocalizedDescriptionKey: message};
         NSError* error = [NSError errorWithDomain:@"Working Copy" code:400 userInfo:userInfo];
@@ -95,7 +95,7 @@
         completionHandler(0,0, error);
     };
     
-    [proxy3 fetchStatusWithCompletionHandler:^(NSUInteger linesAdded,
+    [proxy352 fetchStatusWithCompletionHandler:^(NSUInteger linesAdded,
                                                NSUInteger linesDeleted,
                                                NSError* error) {
                 
@@ -115,8 +115,8 @@
         connection = theConnection;
 
         Protocol* protocol = nil;
-        if([serviceName isEqualToString:ServiceNameVer3]) {
-            protocol = @protocol(WorkingCopyProtocolVer3);
+        if([serviceName isEqualToString:ServiceNameVer352]) {
+            protocol = @protocol(WorkingCopyProtocolVer352);
         } else {
             protocol = @protocol(WorkingCopyProtocolVer1);
         }
@@ -138,8 +138,8 @@
             }
         }];
         
-        if([serviceName isEqualToString:ServiceNameVer3]) {
-            proxy3 = (id<WorkingCopyProtocolVer3>)proxy1;
+        if([serviceName isEqualToString:ServiceNameVer352]) {
+            proxy352 = (id<WorkingCopyProtocolVer352>)proxy1;
         }
     }
     return self;
@@ -159,7 +159,7 @@
                                                       completionHandler:^(NSDictionary* services,
                                                                           NSError* error) {
           // check that we have provider service
-          NSFileProviderService* providerService = services[ServiceNameVer3];
+          NSFileProviderService* providerService = services[ServiceNameVer352];
           if(providerService == nil) providerService = services[ServiceNameVer1];
                                                           
           if(error != nil || providerService == nil) {
