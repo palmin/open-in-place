@@ -9,6 +9,7 @@
 Minimal example app that illustrates how to get open-in-place to work well with iOS document providers.
 
 It shows how to:
+
 - invoke the document picker in open mode for files and directories
 - receive open-in-place file references through Drag and Drop
 - use and persist the security scoped URLs the document picker or Drag and Drop gives you

@@ -3,17 +3,22 @@
 //  OpenInPlace
 //
 //  This view controller shows how to
-//   1) read contents in coordinated manner from a remote file from iCloud Drive or another document providers:
+//   1) read contents in coordinated manner from a remote file from iCloud Drive
+//      or another document providers:
 //    loadContent()
 //
 //   2) write back content in coordinated manner:
-//     writeContentIfNeeded() and writeContentShowingError()
+//     writeContentIfNeeded() and writeContentUpdatingUI()
 //
 //   3) observe changes and coordinate with other processes accessing file:
 //    appMovedToBackground(), appMovedToForeground() and NSFilePresenter delegate methods
 //
 //   4) auto-save changes:
 //    textViewDidChange() and appMovedToBackground()
+//
+//   5) use WorkingCopyUrlService file-provider SDK to get file status and compose
+//      x-callback-url for initiating commit:
+//    loadStatusWithService() and statusTapped()
 //
 //  If you are using UIDocument you mostly get all this for free.
 //
@@ -27,6 +32,7 @@ import UIKit
 class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     
     @IBOutlet var textView: UITextView!
+    @IBOutlet var statusButton: UIBarButtonItem!
     
     private func loadContent() {
         // do not load unless we have both url and view loaded
@@ -52,6 +58,81 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         })
     }
     
+    private var urlService: WorkingCopyUrlService?
+    
+    private func loadStatusWithService(_ service: WorkingCopyUrlService) {
+        service.fetchStatus(completionHandler: {
+          (linesAdded, linesDeleted, error) in
+            
+            self.statusButton.isEnabled = true
+            
+            switch (linesAdded, linesDeleted) {
+
+            case (UInt(NSNotFound), _):
+                // modified binary file
+                self.statusButton.title = "binary"
+                
+            case (0,0):
+                // file is current
+                self.statusButton.title = ""
+                self.statusButton.isEnabled = false
+                
+            case (0, _):
+                // modified text file
+                self.statusButton.title = "-\(linesDeleted)"
+
+            case (_, 0):
+                // modified text file
+                self.statusButton.title = "+\(linesAdded)"
+
+            default:
+                // modified text file
+                self.statusButton.title = "-\(linesDeleted)+\(linesAdded)"
+            }
+        })
+    }
+    
+    @IBAction func statusTapped(_ sender: Any) {
+        guard let service = urlService else { return }
+        
+        // request deep link
+        service.determineDeepLink(completionHandler: { (url, error) in
+            if let error = error {
+                self.showError(error)
+            }
+            
+            guard let url = url else { return }
+            guard let escaped = url.absoluteString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else { return }
+            guard let callbackUrl = URL(string: "working-copy://x-callback-url/commit?url=\(escaped)&x-cancel=open-in-place://&x-success=open-in-place://") else { return }
+
+            UIApplication.shared.openURL(callbackUrl)
+        })
+    }
+    
+    private func loadStatus() {
+        guard isViewLoaded else { return }
+        guard let url = url else { return }
+        
+        if #available(iOS 11.0, *) {
+            
+            // try to use existing service instance
+            if let service = urlService {
+                loadStatusWithService(service)
+                return
+            }
+            
+            // Try to get file provider icon from Working Copy service.
+            WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
+                // the service might very well be missing if you are picking from some other
+                // Location than Working Copy or the version of Working Copy isn't new enough
+                guard let service = service else { return }
+                self.urlService = service
+
+                self.loadStatusWithService(service)
+            })
+        }
+    }
+    
     private var unwrittenChanges = false
     private func writeContentIfNeeded(callback: @escaping ((Error?) -> ())) {
 
@@ -72,12 +153,14 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     }
     
     // calls writeContentIfNeeded(callback:) showing errors
-    @objc private func writeContentShowingError() {
+    @objc private func writeContentUpdatingUI() {
         
         writeContentIfNeeded(callback: { error in
-            if(error != nil) {
-                DispatchQueue.main.async {
-                    self.showError(error!)
+            DispatchQueue.main.async {
+                if let error = error {
+                    self.showError(error)
+                } else {
+                    self.loadStatus()
                 }
             }
         })
@@ -86,6 +169,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadContent()
+        loadStatus()
         
         let notifications = NotificationCenter.default
         notifications.addObserver(self, selector: #selector(appMovedToBackground),
@@ -121,6 +205,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             }
             
             _url = newValue
+            urlService = nil
             
             if(_url != nil) {
                 securityScoped = _url!.startAccessingSecurityScopedResource()
@@ -128,6 +213,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
                 isFilePresenting = true
             }
             loadContent()
+            loadStatus()
         }
         get {
             return _url
@@ -185,7 +271,8 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         }
         
         // write if anything is pending
-        writeContentShowingError()
+        writeContentUpdatingUI()
+        
     }
     
     @objc func appMovedToForeground() {
@@ -196,6 +283,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         }
         
         loadContent()
+        loadStatus()
     }
     
     //MARK: - UITextViewDelegate
@@ -204,11 +292,10 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         // we want to write changes, but not after every keystroke and wait for a
         // whole second without changes
         unwrittenChanges = true
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(writeContentShowingError), object: nil)
-        perform(#selector(writeContentShowingError), with: nil, afterDelay: 1.0)
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(writeContentUpdatingUI), object: nil)
+        perform(#selector(writeContentUpdatingUI), with: nil, afterDelay: 1.0)
     }
     
     //MARK: -
-    
 }
 
