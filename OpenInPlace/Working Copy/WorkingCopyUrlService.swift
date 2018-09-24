@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc private protocol WorkingCopyProtocolVer1 {
+@objc fileprivate protocol WorkingCopyProtocolVer1 {
     func determineDeepLinkWithCompletionHandler(_ completionHandler:
                                                 @escaping ((URL?) -> Void))
     
@@ -17,7 +17,7 @@ import UIKit
                                                                   String?, Data?) -> Void))
 }
 
-@objc private protocol WorkingCopyProtocolVer352 : WorkingCopyProtocolVer1 {
+@objc fileprivate protocol WorkingCopyProtocolVer352 : WorkingCopyProtocolVer1 {
     func fetchStatusWithCompletionHandler(_ completionHandler:
                                           @escaping ((UInt, UInt, Error?) -> Void))
 }
