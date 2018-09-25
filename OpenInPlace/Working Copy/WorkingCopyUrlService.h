@@ -5,6 +5,7 @@
 //  Created by Anders Borum on 13/08/2018.
 //  Copyright © 2018 Applied Phasor. All rights reserved.
 //
+//  There is a Swift version of this file with the same behaviour.
 
 #import <UIKit/UIKit.h>
 
