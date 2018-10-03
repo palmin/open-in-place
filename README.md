@@ -6,7 +6,7 @@
 </p>
 
 # Open in Place
-Minimal example app that illustrates how to get open-in-place to work well with iOS document providers.
+Example app that illustrates how to get open-in-place to work well with iOS document providers.
 
 It shows how to:
 
