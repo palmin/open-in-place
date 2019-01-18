@@ -43,10 +43,10 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     var urls = [URL]()
     
     private func reloadContent() {
-        guard baseURL != nil else { return }
-        
+        guard let baseUrl = self.baseURL else { return }
+                
         let coordinator = NSFileCoordinator(filePresenter: self)
-        baseURL!.coordinatedList(coordinator, callback: { (newUrls, error) in
+        baseUrl.coordinatedList(coordinator, callback: { (newUrls, error) in
             
             DispatchQueue.main.async {
                 if(error != nil) {
@@ -192,8 +192,8 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         let identifier = url.isDirectory ? "dir" : "file"
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
-        cell.textLabel!.text = url.lastPathComponent
-        
+        cell.textLabel!.text = url.filename
+
         if #available(iOS 11.0, *) {
             // Try to get file provider icon from Working Copy service.
             //
@@ -254,7 +254,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         var bookmarks = [Data]()
         
         for url in urls {
-            let _ = url.startAccessingSecurityScopedResource()
+            let started = url.startAccessingSecurityScopedResource()
             do {
                 let bookmark = try url.bookmarkData(options: [],
                                                     includingResourceValuesForKeys: nil,
@@ -264,7 +264,9 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             } catch {
                 self.showError(error, title: "saveUrlBookmarks")
             }
-            url.stopAccessingSecurityScopedResource()
+            if started {
+                url.stopAccessingSecurityScopedResource()
+            }
         }
         
         // store in user defaults, since this is just a demo

@@ -36,12 +36,15 @@ extension URL {
     public func coordinatedList(_ coordinator : NSFileCoordinator,
                                 callback: @escaping (([URL]?, Error?) -> ())) {
         
+        try? FileManager.default.startDownloadingUbiquitousItem(at: self)
+        
         let error: NSErrorPointer = nil
         coordinator.coordinate(readingItemAt: self, options: [],
                                error: error, byAccessor: { url in
                                 do {
+                                    let keys = [URLResourceKey.nameKey]
                                     let urls = try FileManager.default.contentsOfDirectory(at: url,
-                                                                                           includingPropertiesForKeys: nil,
+                                                                                           includingPropertiesForKeys: keys,
                                                                                            options: [])
                                     callback(urls, nil)
                                     
@@ -103,5 +106,28 @@ extension URL {
         default:
             return false
         }
+    }
+    
+    // determine filename for file URL using resource values and promised resource values
+    // to support URL's where only placeholder exists.
+    public var filename: String {
+        do {
+            var pointer: AnyObject?
+            
+            let ns = self as NSURL
+            try ns.getResourceValue(&pointer, forKey: URLResourceKey.nameKey)
+            if pointer == nil {
+                try ns.getPromisedItemResourceValue(&pointer, forKey: URLResourceKey.nameKey)
+            }
+            if let pointer = pointer {
+                if let text = pointer as? String {
+                    return text
+                }
+            }
+            
+        } catch {}
+        
+        // default is to use last path component of URL
+        return lastPathComponent
     }
 }
