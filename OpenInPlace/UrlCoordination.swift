@@ -35,17 +35,24 @@ extension URL {
     
     public func coordinatedList(_ coordinator : NSFileCoordinator,
                                 callback: @escaping (([URL]?, Error?) -> ())) {
-        
-        try? FileManager.default.startDownloadingUbiquitousItem(at: self)
+
+        let manager = FileManager.default
+        if manager.isUbiquitousItem(at: self) {
+            do {
+                try manager.startDownloadingUbiquitousItem(at: self)
+            } catch {
+                callback(nil, error)
+            }
+        }
         
         let error: NSErrorPointer = nil
         coordinator.coordinate(readingItemAt: self, options: [],
                                error: error, byAccessor: { url in
                                 do {
                                     let keys = [URLResourceKey.nameKey]
-                                    let urls = try FileManager.default.contentsOfDirectory(at: url,
-                                                                                           includingPropertiesForKeys: keys,
-                                                                                           options: [])
+                                    let urls = try manager.contentsOfDirectory(at: url,
+                                                                               includingPropertiesForKeys: keys,
+                                                                               options: [])
                                     callback(urls, nil)
                                     
                                 } catch {
@@ -115,10 +122,7 @@ extension URL {
             var pointer: AnyObject?
             
             let ns = self as NSURL
-            try ns.getResourceValue(&pointer, forKey: URLResourceKey.nameKey)
-            if pointer == nil {
-                try ns.getPromisedItemResourceValue(&pointer, forKey: URLResourceKey.nameKey)
-            }
+            try ns.getPromisedItemResourceValue(&pointer, forKey: .nameKey)
             if let pointer = pointer {
                 if let text = pointer as? String {
                     return text
