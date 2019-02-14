@@ -16,6 +16,7 @@
 		BE5FCD052159570E0025C3F6 /* WorkingCopyUrlService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5FCD042159570E0025C3F6 /* WorkingCopyUrlService.swift */; };
 		BE7BBD301EFBB947003FE5D4 /* UrlCoordination.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */; };
 		BE7BBD321EFBBA26003FE5D4 /* ShowError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */; };
+		BE98E568221592F400672721 /* XDocumentSource2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE98E567221592F400672721 /* XDocumentSource2.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		BE5FCD042159570E0025C3F6 /* WorkingCopyUrlService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingCopyUrlService.swift; sourceTree = "<group>"; };
 		BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlCoordination.swift; sourceTree = "<group>"; };
 		BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowError.swift; sourceTree = "<group>"; };
+		BE98E567221592F400672721 /* XDocumentSource2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XDocumentSource2.swift; sourceTree = "<group>"; };
 		BEC920D11EFBF9D100F142B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		BEDCB31A2126FB32000547BA /* WorkingCopyUrlService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkingCopyUrlService.h; sourceTree = "<group>"; };
 		BEDCB31B2126FB32000547BA /* WorkingCopyUrlService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WorkingCopyUrlService.m; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				BE24B3EB1EFB02A3002D5D2A /* ListController.swift */,
 				BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */,
 				BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */,
+				BE98E567221592F400672721 /* XDocumentSource2.swift */,
 				BE24B3EF1EFB02A3002D5D2A /* Main.storyboard */,
 				BE24B3F41EFB02A4002D5D2A /* LaunchScreen.storyboard */,
 				BE24B3F21EFB02A3002D5D2A /* Assets.xcassets */,
@@ -173,6 +176,7 @@
 				BE24B3EE1EFB02A3002D5D2A /* EditController.swift in Sources */,
 				BE5FCD052159570E0025C3F6 /* WorkingCopyUrlService.swift in Sources */,
 				BE24B3EC1EFB02A3002D5D2A /* ListController.swift in Sources */,
+				BE98E568221592F400672721 /* XDocumentSource2.swift in Sources */,
 				BE24B3EA1EFB02A3002D5D2A /* AppDelegate.swift in Sources */,
 				BE7BBD321EFBBA26003FE5D4 /* ShowError.swift in Sources */,
 			);

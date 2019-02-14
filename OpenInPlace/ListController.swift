@@ -199,7 +199,14 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             //
             // A real app wouldn't do this every time the cell was loaded, as there is
             // some communication overhead betweenn file-provider and app.
-            WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
+            
+            url.fetchDocumentInfo(pixelSize: 120, completionHandler: { (path, appName, appVersion, icon) in
+                cell.detailTextLabel?.text = path
+                cell.imageView?.image = icon
+                cell.setNeedsLayout()
+            })
+            
+            /*  WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
                 // the service might very well be missing if you are picking from some other
                 // Location than Working Copy or the version of Working Copy isn't new enough
                 guard let service = service else { return }
@@ -210,7 +217,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                     cell.imageView?.image = icon
                     cell.setNeedsLayout()
                 })
-            })
+            }) */
         }
         
         url.stopAccessingSecurityScopedResource()
