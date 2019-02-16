@@ -195,29 +195,33 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         cell.textLabel!.text = url.lastPathComponent
         
         if #available(iOS 11.0, *) {
-            // Try to get file provider icon from Working Copy service.
+            // Try to get file provider icon from x-document-source-2 or Working Copy service.
             //
             // A real app wouldn't do this every time the cell was loaded, as there is
             // some communication overhead betweenn file-provider and app.
             
             url.fetchDocumentInfo(pixelSize: 120, completionHandler: { (path, appName, appVersion, icon) in
-                cell.detailTextLabel?.text = path
-                cell.imageView?.image = icon
-                cell.setNeedsLayout()
-            })
-            
-            /*  WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
-                // the service might very well be missing if you are picking from some other
-                // Location than Working Copy or the version of Working Copy isn't new enough
-                guard let service = service else { return }
-                
-                service.fetchDocumentSourceInfo(completionHandler: { (path, appName, appVersion, icon, error) in
-                    
+                if path != nil {
                     cell.detailTextLabel?.text = path
                     cell.imageView?.image = icon
                     cell.setNeedsLayout()
+                    return
+                }
+                
+                // try using Working Copy service
+                WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
+                    // the service might very well be missing if you are picking from some other
+                    // Location than Working Copy or the version of Working Copy isn't new enough
+                    guard let service = service else { return }
+                    
+                    service.fetchDocumentSourceInfo(completionHandler: { (path, appName, appVersion, icon, error) in
+                        
+                        cell.detailTextLabel?.text = path
+                        cell.imageView?.image = icon
+                        cell.setNeedsLayout()
+                    })
                 })
-            }) */
+            })
         }
         
         url.stopAccessingSecurityScopedResource()
