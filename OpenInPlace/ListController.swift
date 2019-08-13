@@ -3,7 +3,7 @@
 //  OpenInPlace
 //
 //  This view controller shows how to
-//   1) open files and directories from iCloud Drive and other document providers as security scoped URLs:
+//   1) open directories from iCloud Drive and other document providers as security scoped URLs:
 //    pickURLs() and the UIDocumentPickerDelegate delegate methods.
 //
 //   2) drag in-place references to files and directories from other applications as security scoped URLs:
@@ -315,7 +315,16 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     
     @objc func pickURLs(_ sender: Any) {
         
-        let types = [kUTTypeText as String, kUTTypeDirectory as String]
+        // iOS 13 only allows picking directories when types contains kUTTypeFolder and no other
+        // elements where earlier versions of iOS allows picking either files or folders.
+        //
+        // On iOS 13 you need to decide if you want files or folders before showing the document picker
+        let types: [String]
+        if #available(iOS 13.0, *) {
+            types = [kUTTypeFolder as String]
+        } else {
+            types = [kUTTypeText as String, kUTTypeDirectory as String]
+        }
         let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
         
         if #available(iOS 11.0, *) {
