@@ -207,20 +207,6 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                     cell.setNeedsLayout()
                     return
                 }
-                
-                // try using Working Copy service
-                WorkingCopyUrlService.getFor(url, completionHandler: { (service, error) in
-                    // the service might very well be missing if you are picking from some other
-                    // Location than Working Copy or the version of Working Copy isn't new enough
-                    guard let service = service else { return }
-                    
-                    service.fetchDocumentSourceInfo(completionHandler: { (path, appName, appVersion, icon, error) in
-                        
-                        cell.detailTextLabel?.text = path
-                        cell.imageView?.image = icon
-                        cell.setNeedsLayout()
-                    })
-                })
             })
         }
         
