@@ -108,7 +108,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
 
             sheet.addAction(UIAlertAction(title: NSLocalizedString("Pick Directory", comment: ""),
                                           style: .default, handler: { _ in
-                self.pickURLs(types: [kUTTypeDirectory as String], sender)
+                self.pickURLs(types: [kUTTypeFolder as String], sender)
             }))
 
             sheet.addAction(UIAlertAction(title: NSLocalizedString("Pick File", comment: ""),
