@@ -81,7 +81,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         if(isRoot) {
             navigationItem.leftBarButtonItem = editButtonItem
             
-            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(pickURLs(_:)))
+            let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
             navigationItem.rightBarButtonItems = [addButton]
             
         } else {
@@ -98,6 +98,34 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? EditController
         }
+    }
+    
+    @objc func addTapped(_ sender: Any) {
+        if #available(iOS 13.0, *) {
+            // on iOS 13 we cannot ask for both files and directories when showing the document picker
+            // and we need to ask the user what they want to pick first
+            let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+            sheet.addAction(UIAlertAction(title: NSLocalizedString("Pick Directory", comment: ""),
+                                          style: .default, handler: { _ in
+                self.pickURLs(types: [kUTTypeDirectory as String], sender)
+            }))
+
+            sheet.addAction(UIAlertAction(title: NSLocalizedString("Pick File", comment: ""),
+                                          style: .default, handler: { _ in
+                self.pickURLs(types: [kUTTypeText as String], sender)
+            }))
+
+            sheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
+                                          style: .cancel, handler: nil))
+            self.present(sheet, animated: true)
+            
+        } else {
+
+            // we can ask for either files or directories on iOS 12 and before
+            pickURLs(types: [kUTTypeText as String, kUTTypeDirectory as String], sender)
+        }
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -299,20 +327,8 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         if anyStale { saveUrlBookmarks() }
     }
     
-    @objc func pickURLs(_ sender: Any) {
-        
-        // iOS 13 only allows picking directories when types contains kUTTypeFolder and no other
-        // elements where earlier versions of iOS allows picking either files or folders.
-        //
-        // On iOS 13 you need to decide if you want files or folders before showing the document picker
-        let types: [String]
-        if #available(iOS 13.0, *) {
-            types = [kUTTypeFolder as String]
-        } else {
-            types = [kUTTypeText as String, kUTTypeDirectory as String]
-        }
+    func pickURLs(types: [String], _ sender: Any) {
         let picker = UIDocumentPickerViewController(documentTypes: types, in: .open)
-        
         if #available(iOS 11.0, *) {
             let _ = picker.view // force loading of view, since allowsMultipleSelection does not stick otherwise
             picker.allowsMultipleSelection = true
