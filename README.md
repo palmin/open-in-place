@@ -23,7 +23,7 @@ that fully supports opening directories in-place. Opening files in-place should 
 
 The excellent [Textastic](https://geo.itunes.apple.com/us/app/id1049254261?ct=textasticapp.com&at=11lNQP&pt=15967&mt=8)
 has been [doing](http://blach.io/2016/08/02/opening-git-repository-folders-in-textastic-6-2/) this for a while and so
-does [Codea](http://itunes.apple.com/app/id439571171?mt=8) and 
+does [Codea](http://itunes.apple.com/app/id439571171?mt=8), [iA Writer](https://ia.net/writer) and 
 [Pythonista](https://apps.apple.com/us/app/pythonista-3/id1085978097?ls=1).
 My hope is that providing sample code will encourage others to follow suit. 
 
