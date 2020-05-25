@@ -100,7 +100,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         }
     }
     
-    @objc func addTapped(_ sender: Any) {
+    @objc func addTapped(_ sender: UIBarButtonItem) {
         if #available(iOS 13.0, *) {
             // on iOS 13 we cannot ask for both files and directories when showing the document picker
             // and we need to ask the user what they want to pick first
@@ -118,6 +118,8 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
 
             sheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""),
                                           style: .cancel, handler: nil))
+            
+            sheet.popoverPresentationController?.barButtonItem = sender
             self.present(sheet, animated: true)
             
         } else {
