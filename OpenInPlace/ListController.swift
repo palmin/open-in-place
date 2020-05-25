@@ -65,9 +65,9 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         let notifications = NotificationCenter.default
         notifications.addObserver(self, selector: #selector(appMovedToBackground),
-                                  name: Notification.Name.UIApplicationWillResignActive, object: nil)
+                                  name: UIApplication.willResignActiveNotification, object: nil)
         notifications.addObserver(self, selector: #selector(appMovedToForeground),
-                                  name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+                                  name: UIApplication.didBecomeActiveNotification, object: nil)
         
         restoreUrlBookmarks()
         
@@ -135,7 +135,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         
         // make sure we only remove file presenter and stop security scope once
         // and only when list is being removed fully from view hierarchy
-        if self.isMovingFromParentViewController {
+        if self.isMovingFromParent {
             if(isFilePresenting) {
                 NSFileCoordinator.removeFilePresenter(self)
                 isFilePresenting = false
@@ -250,7 +250,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         return true
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             
             if(baseURL != nil) {
@@ -313,7 +313,7 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                     let url = try URL(resolvingBookmarkData: bookmark, bookmarkDataIsStale: &stale)
                     if(url != nil) {
                         anyStale = anyStale || stale
-                        newUrls.append(url!)
+                        newUrls.append(url)
                     }
                     
                 } catch {

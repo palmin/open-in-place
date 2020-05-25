@@ -176,16 +176,16 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         
         let notifications = NotificationCenter.default
         notifications.addObserver(self, selector: #selector(appMovedToBackground),
-                                  name: Notification.Name.UIApplicationWillResignActive, object: nil)
+                                  name: UIApplication.willResignActiveNotification, object: nil)
         notifications.addObserver(self, selector: #selector(appMovedToForeground),
-                                  name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+                                  name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         // clean up when removed
-        if url != nil && self.isMovingFromParentViewController {
+        if url != nil && self.isMovingFromParent {
             url = nil
         }
     }
