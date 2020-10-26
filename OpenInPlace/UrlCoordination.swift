@@ -39,15 +39,28 @@ extension URL {
         let error: NSErrorPointer = nil
         coordinator.coordinate(readingItemAt: self, options: [],
                                error: error, byAccessor: { url in
-                                do {
-                                    let urls = try FileManager.default.contentsOfDirectory(at: url,
-                                                                                           includingPropertiesForKeys: nil,
-                                                                                           options: [])
-                                    callback(urls, nil)
+            do {
+                let urls = try FileManager.default.contentsOfDirectory(at: url,
+                                                                       includingPropertiesForKeys: nil,
+                                                                       options: [])
+                    
+                    // sometimes placeholder files are not resolved and we do this manually as a work-around
+                    let resolved = urls.map({ url -> URL in
+                        let filename = url.lastPathComponent
+                        if filename.hasPrefix(".") && filename.hasSuffix(".icloud") {
+                            let fixed = String(filename.dropFirst().dropLast(7)) // drop leading . and trailing  .icloud
+                            let directory = url.deletingLastPathComponent()
+                            return directory.appendingPathComponent(fixed, isDirectory: url.isDirectory)
+                        }
+                        
+                        return url
+                    })
+                
+                    callback(resolved, nil)
                                     
-                                } catch {
-                                    callback(nil, error)
-                                }
+                } catch {
+                    callback(nil, error)
+                }
         })
         
         // only do callback if there is error, as it will be made during coordination
