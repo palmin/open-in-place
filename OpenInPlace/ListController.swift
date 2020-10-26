@@ -311,10 +311,9 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
                 do {
                     var stale = false
                     let url = try URL(resolvingBookmarkData: bookmark, bookmarkDataIsStale: &stale)
-                    if(url != nil) {
-                        anyStale = anyStale || stale
-                        newUrls.append(url)
-                    }
+                    
+                    anyStale = anyStale || stale
+                    newUrls.append(url)
                     
                 } catch {
                     print("\(error)")
