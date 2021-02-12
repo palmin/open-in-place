@@ -34,7 +34,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     @IBOutlet var textView: UITextView!
     @IBOutlet var statusButton: UIBarButtonItem!
     
-    private func loadContent() {
+    private func loadContent() {        
         // do not load unless we have both url and view loaded
         guard isViewLoaded else { return }
         guard url != nil else {

@@ -160,9 +160,10 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
         }
         
         if segue.identifier == "edit" {
-            if let indexPath = tableView.indexPathForSelectedRow {
+            if let indexPath = tableView.indexPathForSelectedRow,
+               let nav = segue.destination as? UINavigationController,
+               let controller = nav.topViewController as? EditController {
                 
-                let controller = segue.destination as! EditController
                 controller.url = urls[indexPath.row]
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
