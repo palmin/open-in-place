@@ -190,16 +190,20 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             let uti = itemProvider.registeredTypeIdentifiers.first ?? "public.data"
             itemProvider.loadInPlaceFileRepresentation(forTypeIdentifier: uti,
                                                        completionHandler: {(url, inPlace, error) in
-                if error != nil { self.showError(error!) }
+                if let err = error {
+                    DispatchQueue.main.async {
+                        self.showError(err)
+                    }
+                }
                 guard inPlace else { return }
 
                 guard let url = url else { return }
                                                         
-                // remember this url
-                self.urls.append(url)
-                self.saveUrlBookmarks()
-
                 DispatchQueue.main.async {
+                    // remember this url
+                    self.urls.append(url)
+                    self.saveUrlBookmarks()
+
                     self.tableView.reloadData()
                 }
             })
@@ -350,6 +354,10 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
     
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt newUrls: [URL]) {
         urls.append(contentsOf: newUrls)
+        for url in newUrls {
+            let attr = try? FileManager.default.attributesOfItem(atPath: url.path)
+            print("\(url.lastPathComponent): \(attr ?? [:])")
+        }
         saveUrlBookmarks()
         
         tableView.reloadData()
