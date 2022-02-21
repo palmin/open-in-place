@@ -5,7 +5,7 @@
 <a href="http://twitter.com/palmin"><img src="https://img.shields.io/badge/Twitter-@palmin-blue.svg?style=flat" alt="Twitter"/></a>
 </p>
 
-# Open in Place. 
+# Open in Place.
 Example app that illustrates how to get open-in-place to work well with iOS document providers.
 
 It shows how to:
