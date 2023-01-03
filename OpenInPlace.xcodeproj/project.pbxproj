@@ -17,6 +17,8 @@
 		BE7BBD301EFBB947003FE5D4 /* UrlCoordination.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */; };
 		BE7BBD321EFBBA26003FE5D4 /* ShowError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */; };
 		BE98E568221592F400672721 /* XDocumentSource2.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE98E567221592F400672721 /* XDocumentSource2.swift */; };
+		BEAC7B5F2962D9ED0022F97C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEAC7B5E2962D9ED0022F97C /* SceneDelegate.swift */; };
+		BEAC7B612962E1AA0022F97C /* XCallbackOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEAC7B602962E1A90022F97C /* XCallbackOpener.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,8 @@
 		BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlCoordination.swift; sourceTree = "<group>"; };
 		BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowError.swift; sourceTree = "<group>"; };
 		BE98E567221592F400672721 /* XDocumentSource2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XDocumentSource2.swift; sourceTree = "<group>"; };
+		BEAC7B5E2962D9ED0022F97C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		BEAC7B602962E1A90022F97C /* XCallbackOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCallbackOpener.swift; sourceTree = "<group>"; };
 		BEC920D11EFBF9D100F142B4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		BEDCB31A2126FB32000547BA /* WorkingCopyUrlService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkingCopyUrlService.h; sourceTree = "<group>"; };
 		BEDCB31B2126FB32000547BA /* WorkingCopyUrlService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WorkingCopyUrlService.m; sourceTree = "<group>"; };
@@ -73,8 +77,10 @@
 				BE24B3E91EFB02A3002D5D2A /* AppDelegate.swift */,
 				BE24B3ED1EFB02A3002D5D2A /* EditController.swift */,
 				BE24B3EB1EFB02A3002D5D2A /* ListController.swift */,
+				BEAC7B5E2962D9ED0022F97C /* SceneDelegate.swift */,
 				BE7BBD311EFBBA26003FE5D4 /* ShowError.swift */,
 				BE7BBD2F1EFBB947003FE5D4 /* UrlCoordination.swift */,
+				BEAC7B602962E1A90022F97C /* XCallbackOpener.swift */,
 				BE98E567221592F400672721 /* XDocumentSource2.swift */,
 				BE24B3EF1EFB02A3002D5D2A /* Main.storyboard */,
 				BE24B3F41EFB02A4002D5D2A /* LaunchScreen.storyboard */,
@@ -122,7 +128,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = "Applied Phasor";
 				TargetAttributes = {
 					BE24B3E51EFB02A3002D5D2A = {
@@ -177,8 +183,10 @@
 				BE5FCD052159570E0025C3F6 /* WorkingCopyUrlService.swift in Sources */,
 				BE24B3EC1EFB02A3002D5D2A /* ListController.swift in Sources */,
 				BE98E568221592F400672721 /* XDocumentSource2.swift in Sources */,
+				BEAC7B612962E1AA0022F97C /* XCallbackOpener.swift in Sources */,
 				BE24B3EA1EFB02A3002D5D2A /* AppDelegate.swift in Sources */,
 				BE7BBD321EFBBA26003FE5D4 /* ShowError.swift in Sources */,
+				BEAC7B5F2962D9ED0022F97C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +237,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -254,7 +263,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -288,6 +297,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -307,7 +317,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -323,11 +333,13 @@
 				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appliedphasor.OpenInPlace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
@@ -343,11 +355,13 @@
 				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appliedphasor.OpenInPlace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

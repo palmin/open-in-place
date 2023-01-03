@@ -108,7 +108,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
             guard let escaped = url.absoluteString.addingPercentEncoding(withAllowedCharacters: allowChars) else { return }
             guard let callbackUrl = URL(string: "working-copy://x-callback-url/commit?url=\(escaped)&x-cancel=open-in-place://&x-success=open-in-place://") else { return }
 
-            UIApplication.shared.openURL(callbackUrl)
+            UIApplication.shared.open(callbackUrl)
         })
     }
     
