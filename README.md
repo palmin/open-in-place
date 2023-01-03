@@ -15,7 +15,7 @@ It shows how to:
 - use and persist the security scoped URLs the document picker or Drag and Drop gives you
 - work with a directory in a coordinated manner to stay in sync
 - edit a text file in a coordinated manner such that your changes are written safely and such that outside changes appear in the editor automatically
-- use the [WorkingCopyUrlService](OpenInPlace/Working Copy/WorkingCopyUrlService.swift) file-provider SDK to fetch information about entries
+- use the [WorkingCopyUrlService](OpenInPlace/Working%20Copy/WorkingCopyUrlService.swift) file-provider SDK to fetch information about entries
 - open using x-callback-url without user interaction for files in folders user has previously granted access using [XCallbackOpener](OpenInPlace/XCallbackOpener.swift)
 
 Using the document picker to open directories will probably only work for iCloud Drive, external drives and 
