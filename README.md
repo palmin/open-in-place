@@ -16,7 +16,7 @@ It shows how to:
 - work with a directory in a coordinated manner to stay in sync
 - edit a text file in a coordinated manner such that your changes are written safely and such that outside changes appear in the editor automatically
 - use the WorkingCopyUrlService file-provider SDK to fetch information about entries
-- open using x-callback-url without user interaction for files in folders user has previously granted access to using XCallbackOpener
+- open using x-callback-url without user interaction for files in folders user has previously granted access using XCallbackOpener
 
 Using the document picker to open directories will probably only work for iCloud Drive, external drives and 
 a few third party apps. I am the author of [Working Copy](https://itunes.apple.com/us/app/working-copy/id896694807?mt=8&uo=6&at=1000lHq&ct=openinplace) and [Secure ShellFish](https://apps.apple.com/us/app/secure-shellfish-sftp-client/id1336634154?mt=openinplace) 
