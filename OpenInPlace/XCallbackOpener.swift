@@ -19,8 +19,10 @@ import MobileCoreServices
 // and the first time the user would be asked to pick the root folder before the file was opened
 // but after this any files inside root folder can be opened without showing the document picker.
 //
-// You need to set XCallbackOpener.shared.openCallback to open the file similarly to what you
-// would do when users trigerred opening of URLs with document picker or document browser.
+// You need to set XCallbackOpener.shared.openCallback in `application(_:didFinishLaunchingWithOptions:)` 
+// to open the file similarly to what you would do when users trigerred opening of URLs with document 
+// picker or document browser. This often includes starting security scope and opening the file under 
+// file coordination.
 //
 // You probably want to change XCallbackOpener.shared.handleError to report errors in a nicer
 // way when there is no way to report the error back to source app triggering x-callback-url.
