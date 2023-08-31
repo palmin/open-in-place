@@ -19,7 +19,9 @@ It shows how to:
 - open using x-callback-url without user interaction for files in folders user has previously granted access using [XCallbackOpener](OpenInPlace/XCallbackOpener.swift)
 
 Using the document picker to open directories will probably only work for iCloud Drive, external drives and 
-a few third party apps. I am the author of [Working Copy](https://itunes.apple.com/us/app/working-copy/id896694807?mt=8&uo=6&at=1000lHq&ct=openinplace) and [Secure ShellFish](https://apps.apple.com/us/app/secure-shellfish-sftp-client/id1336634154?mt=openinplace) 
+a few third party apps. I am the author of [Working Copy](https://itunes.apple.com/us/app/working-copy/id896694807?mt=8&uo=6&at=1000lHq&ct=openinplace), 
+[S3 Files](https://apps.apple.com/us/app/s3-files/id6447647340?mt=openinplace) and 
+[Secure ShellFish](https://apps.apple.com/us/app/secure-shellfish-sftp-client/id1336634154?mt=openinplace) 
 that fully supports opening directories in-place. Opening files in-place should be supported by all file providers.
 
 The excellent [Textastic](https://geo.itunes.apple.com/us/app/id1049254261?ct=textasticapp.com&at=11lNQP&pt=15967&mt=8)
