@@ -90,7 +90,9 @@ class ListController: UITableViewController, UIDocumentPickerDelegate, NSFilePre
             self.navigationItem.title = baseURL?.lastPathComponent
             
             reloadContent()
+
             NSFileCoordinator.addFilePresenter(self)
+            isFilePresenting = true
         }
         
         
