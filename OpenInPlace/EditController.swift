@@ -33,8 +33,24 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     
     @IBOutlet var textView: UITextView!
     @IBOutlet var statusButton: UIBarButtonItem!
+    @IBOutlet var detailsItem: UIBarButtonItem!
     
-    private func loadContent() {        
+    private func configureDetailMenu() {
+        let updateLastUseDate = UIAction(title: NSLocalizedString("Update Last-Use", comment: "")) { _ in
+            let coordinator = NSFileCoordinator(filePresenter: self)
+            self.url?.coordinatedUpdateLastUseDate(coordinator) { error in
+                if let error = error {
+                    DispatchQueue.main.async {
+                        self.showError(error)
+                    }
+                }
+            }
+        }
+        
+        detailsItem.menu = UIMenu(children: [updateLastUseDate])
+    }
+    
+    private func loadContent() {
         // do not load unless we have both url and view loaded
         guard isViewLoaded else { return }
         guard url != nil else {
@@ -173,6 +189,7 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
         super.viewDidLoad()
         loadContent()
         loadStatus()
+        configureDetailMenu()
         
         let notifications = NotificationCenter.default
         notifications.addObserver(self, selector: #selector(appMovedToBackground),
@@ -238,7 +255,9 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     
     // file was changed by someone else and we want to reload
     func presentedItemDidChange() {
-        loadContent()
+        DispatchQueue.main.async {
+            self.loadContent()
+        }
     }
     
     // someone wants to read the file and we make sure pending changes are written

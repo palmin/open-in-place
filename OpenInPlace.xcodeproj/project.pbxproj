@@ -333,7 +333,7 @@
 				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appliedphasor.OpenInPlace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -355,7 +355,7 @@
 				CODE_SIGN_ENTITLEMENTS = OpenInPlace/OpenInPlace.entitlements;
 				DEVELOPMENT_TEAM = 4U9NSKBV63;
 				INFOPLIST_FILE = OpenInPlace/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.appliedphasor.OpenInPlace;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -92,19 +92,34 @@ extension URL {
         let error: NSErrorPointer = nil
         coordinator.coordinate(writingItemAt: self, options: [],
                                error: error, byAccessor: { url in
-                                do {
-                                    try text.write(to: url, atomically: false, encoding: .utf8)
-                                    callback(nil)
-                                    
-                                } catch {
-                                    callback(error)
-                                }
+            do {
+                try text.write(to: url, atomically: false, encoding: .utf8)
+                callback(nil)
+                
+            } catch {
+                callback(error)
+            }
         })
         
         // only do callback if there is error, as it will be made during coordination
         if error != nil { callback(error!.pointee! as NSError) }
     }
-    
+
+    // this will trigger a call to file provider changing lastUseDate to the value it had previously,
+    // as a sort of no-operation giving the file provider a chance to do work
+    func coordinatedUpdateLastUseDate(_ coordinator : NSFileCoordinator,
+                                      callback: @escaping ((Error?) -> ())) {
+        let error: NSErrorPointer = nil
+        coordinator.coordinate(writingItemAt: self,
+                               options: [.contentIndependentMetadataOnly],
+                               error: error, byAccessor: { url in
+            callback(nil)
+        })
+        
+        // only do callback if there is error, as it will be made during coordination
+        if error != nil { callback(error!.pointee! as NSError) }
+    }
+
     // shorthand to check if URL is directory
     public var isDirectory: Bool {
         let keys = Set<URLResourceKey>([URLResourceKey.isDirectoryKey])
