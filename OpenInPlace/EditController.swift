@@ -36,18 +36,18 @@ class EditController: UIViewController, UITextViewDelegate, NSFilePresenter {
     @IBOutlet var detailsItem: UIBarButtonItem!
     
     private func configureDetailMenu() {
-        let updateLastUseDate = UIAction(title: NSLocalizedString("Update Last-Use", comment: "")) { _ in
-            let coordinator = NSFileCoordinator(filePresenter: self)
-            self.url?.coordinatedUpdateLastUseDate(coordinator) { error in
+        let notify = UIAction(title: NSLocalizedString("Send didAccess notification", comment: "")) { _ in
+            self.url?.xDocumentNotifyDidAccess { error in
                 if let error = error {
-                    DispatchQueue.main.async {
-                        self.showError(error)
-                    }
+                    self.showError(error)
                 }
             }
         }
+        if #available(iOS 15.0, *) {
+            notify.subtitle = "dk.andersborum.document-notify"
+        }
         
-        detailsItem.menu = UIMenu(children: [updateLastUseDate])
+        detailsItem.menu = UIMenu(children: [notify])
     }
     
     private func loadContent() {
