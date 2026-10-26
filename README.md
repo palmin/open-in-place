@@ -33,4 +33,4 @@ My hope is that providing sample code will encourage others to follow suit.
 A good place to start is at the top of [ListController](OpenInPlace/ListController.swift) and
 [EditController](OpenInPlace/EditController.swift).
 
-If you have any questions the easiest way to catch me is on Twitter as [@palmin](https://twitter.com/palmin).
+If you have any questions the easiest way to catch me is on [Mastodon](https://mastodon.social/@palmin).
